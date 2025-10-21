@@ -10,13 +10,16 @@ class Product extends Model
     use HasFactory;
 
     protected $fillable = [
-        'name', 'description', 'price', 'status', 'product_type', 'variations', 'downloads', 'service', 'image'
+        'name',
+        'description',
+        'price',
+        'status',
+        'variations',
+        'image',
     ];
 
     protected $casts = [
         'variations' => 'array',
-        'downloads' => 'array',
-        'service' => 'array',
         'status' => 'boolean',
         'price' => 'decimal:2',
     ];
@@ -33,10 +36,9 @@ class Product extends Model
     }
 
 
-// Optional: average rating helper
-public function averageRating()
-{
-    return $this->reviews()->avg('rating');
-}
-
+    // Optional: average rating helper
+    public function averageRating()
+    {
+        return $this->reviews()->avg('rating');
+    }
 }

@@ -11,28 +11,21 @@ return new class extends Migration
         Schema::create('offers', function (Blueprint $table) {
             $table->id();
 
-            $table->enum('offer_type', ['coupon', 'delivery', 'product', 'cart']); 
+            $table->enum('offer_type', ['coupon', 'product', 'cart']); 
 
-            // Coupon code for coupon type
             $table->string('code')->nullable()->unique();
 
-            // Discount
             $table->enum('discount_type', ['percentage', 'fixed']);
             $table->decimal('discount_value', 10, 2);
 
-            // Conditions
             $table->decimal('min_order_amount', 10, 2)->default(0);
             $table->decimal('max_discount', 10, 2)->nullable();
 
-            // Targets
-            $table->foreignId('delivery_zone_id')->nullable()->constrained()->cascadeOnDelete();
-            $table->foreignId('product_id')->nullable()->constrained()->cascadeOnDelete();
+            $table->json('product_id')->nullable(); // multiple products stored as JSON
 
-            // Limits
             $table->integer('usage_limit')->nullable();
             $table->integer('used_count')->default(0);
 
-            // Time validity
             $table->dateTime('starts_at')->nullable();
             $table->dateTime('expires_at')->nullable();
 

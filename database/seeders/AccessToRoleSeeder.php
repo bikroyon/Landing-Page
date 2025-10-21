@@ -31,7 +31,7 @@ class AccessToRoleSeeder extends Seeder
         // 🌟 2️⃣ Customer role (ID = 2) - only menus 14–18
         $customerMenuIds = [14, 15, 16, 17, 18];
         foreach ($customerMenuIds as $menuId) {
-            foreach ($actionIds as $actionId) {
+            foreach ($actionIds as $actionId) { 
                 DB::table('access_to_role')->insert([
                     'role_id' => 2,
                     'menu_id' => $menuId,

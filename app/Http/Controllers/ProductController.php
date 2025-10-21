@@ -5,13 +5,9 @@ namespace App\Http\Controllers;
 use App\Models\Product;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
-use Illuminate\Support\Str;
 
 class ProductController extends Controller
 {
-    /**
-     * Display a listing of the products with search and pagination.
-     */
     public function index(Request $request)
     {
         $search = $request->input('search');
@@ -23,7 +19,7 @@ class ProductController extends Controller
             })
             ->orderBy('id', 'desc')
             ->paginate(10)
-            ->withQueryString(); // preserve search query in pagination
+            ->withQueryString();
 
         return Inertia::render('products/Index', [
             'products' => $products,
@@ -31,17 +27,11 @@ class ProductController extends Controller
         ]);
     }
 
-    /**
-     * Show the form for creating a new product.
-     */
     public function create()
     {
         return Inertia::render('products/Create');
     }
 
-    /**
-     * Store a newly created product in storage.
-     */
     public function store(Request $request)
     {
         $validated = $request->validate([
@@ -49,10 +39,7 @@ class ProductController extends Controller
             'description' => 'nullable|string',
             'price' => 'nullable|numeric',
             'status' => 'boolean',
-            'product_type' => 'required|in:physical,digital,service',
             'variations' => 'nullable|array',
-            'downloads' => 'nullable|array',
-            'service' => 'nullable|array',
             'image' => 'nullable|string',
         ]);
 
@@ -61,19 +48,13 @@ class ProductController extends Controller
         return redirect()->route('products.index')->with('success', 'Product created successfully!');
     }
 
-    /**
-     * Show the form for editing the specified product.
-     */
     public function edit(Product $product)
     {
         return Inertia::render('products/Edit', [
-            'product' => $product
+            'product' => $product,
         ]);
     }
 
-    /**
-     * Update the specified product in storage.
-     */
     public function update(Request $request, Product $product)
     {
         $validated = $request->validate([
@@ -81,10 +62,7 @@ class ProductController extends Controller
             'description' => 'nullable|string',
             'price' => 'nullable|numeric',
             'status' => 'boolean',
-            'product_type' => 'required|in:physical,digital,service',
             'variations' => 'nullable|array',
-            'downloads' => 'nullable|array',
-            'service' => 'nullable|array',
             'image' => 'nullable|string',
         ]);
 
@@ -93,9 +71,6 @@ class ProductController extends Controller
         return redirect()->route('products.index')->with('success', 'Product updated successfully!');
     }
 
-    /**
-     * Remove the specified product from storage.
-     */
     public function destroy(Product $product)
     {
         $product->delete();

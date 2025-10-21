@@ -16,15 +16,11 @@ return new class extends Migration
             $table->string('name');
             $table->text('description')->nullable();
             $table->decimal('price', 10, 2)->default(0);
-            $table->boolean('status')->default(true);
-            $table->enum('product_type', ['physical','digital','service'])->default('physical');
-            $table->json('variations')->nullable(); // store physical product variations
-            $table->json('downloads')->nullable();  // store digital product files
-            $table->json('service')->nullable();    // store service info
             $table->string('image')->nullable();
+            $table->boolean('status')->default(true);
+            $table->json('variations')->nullable(); // for size/color, etc.
             $table->timestamps();
         });
-
     }
 
     /**

@@ -11,47 +11,40 @@ class ProductSeeder extends Seeder
     {
         Product::create([
             'name' => 'Cotton T-Shirt',
-            'description' => 'Comfortable cotton T-shirt in multiple sizes',
+            'description' => 'Comfortable cotton T-shirt in multiple sizes.',
             'price' => 500,
             'status' => true,
-            'product_type' => 'physical',
             'variations' => [
                 ['name' => 'Small', 'extra_price' => 0, 'sku' => 'TS-S', 'stock' => 50],
                 ['name' => 'Medium', 'extra_price' => 50, 'sku' => 'TS-M', 'stock' => 40],
                 ['name' => 'Large', 'extra_price' => 100, 'sku' => 'TS-L', 'stock' => 30],
             ],
-            'image' => 'products/tshirt.png',
+            'image' => 'https://placehold.co/600x400',
         ]);
 
         Product::create([
-            'name' => 'E-book: Learn Laravel',
-            'description' => 'Downloadable PDF guide for Laravel beginners',
-            'price' => 300,
+            'name' => 'Leather Wallet',
+            'description' => 'Genuine leather wallet with multiple compartments.',
+            'price' => 1200,
             'status' => true,
-            'product_type' => 'digital',
-            'downloads' => [
-                ['name' => 'Laravel Guide PDF', 'file' => 'downloads/laravel.pdf', 'extra_price' => 0, 'max_downloads' => 5]
+            'variations' => [
+                ['name' => 'Brown', 'extra_price' => 0, 'sku' => 'LW-BR', 'stock' => 25],
+                ['name' => 'Black', 'extra_price' => 0, 'sku' => 'LW-BL', 'stock' => 20],
             ],
-            'image' => 'products/ebook.png',
+            'image' => 'https://placehold.co/600x400',
         ]);
 
         Product::create([
-            'name' => 'Web Development Course',
-            'description' => 'Weekly online course for learning web development',
-            'price' => 2000,
+            'name' => 'Running Shoes',
+            'description' => 'Lightweight running shoes for all terrains.',
+            'price' => 3000,
             'status' => true,
-            'product_type' => 'service',
-            'service' => [
-                'type' => 'course',
-                'start_date' => '2025-10-01',
-                'end_date' => '2025-12-31',
-                'days_of_week' => ['Monday','Wednesday','Friday'],
-                'time' => '18:00',
-                'duration_per_session' => 2,
-                'max_participants' => 20,
-                'notes' => 'Bring your own laptop'
+            'variations' => [
+                ['name' => 'Size 8', 'extra_price' => 0, 'sku' => 'RS-8', 'stock' => 15],
+                ['name' => 'Size 9', 'extra_price' => 0, 'sku' => 'RS-9', 'stock' => 10],
+                ['name' => 'Size 10', 'extra_price' => 0, 'sku' => 'RS-10', 'stock' => 5],
             ],
-            'image' => 'products/course.png',
+            'image' => 'https://placehold.co/600x400',
         ]);
     }
 }
