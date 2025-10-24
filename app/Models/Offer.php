@@ -17,7 +17,6 @@ class Offer extends Model
         'discount_value',
         'min_order_amount',
         'max_discount',
-        'delivery_zone_id',
         'product_id',
         'usage_limit',
         'used_count',
@@ -29,11 +28,6 @@ class Offer extends Model
     public function product()
     {
         return $this->belongsTo(Product::class);
-    }
-
-    public function deliveryZone()
-    {
-        return $this->belongsTo(DeliveryZone::class);
     }
 
     // Check if the offer is active and usable

@@ -3,65 +3,84 @@
 namespace App\Http\Controllers;
 
 use App\Models\Offer;
+use App\Models\Product;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
 class OfferController extends Controller
 {
-    public function index(Request $request)
+    public function index()
     {
-        $query = Offer::query();
-
-        if ($request->search) {
-            $query->where('code', 'like', "%{$request->search}%");
-        }
-
-        $offers = $query->latest()->paginate(10)->withQueryString();
+        $offers = Offer::latest()->paginate(10);
 
         return Inertia::render('offers/Index', [
             'offers' => $offers,
-            'filters' => $request->only('search'),
         ]);
     }
 
     public function create()
     {
-        return Inertia::render('offers/Form', [
-            'offer' => null,
+        $products = Product::select('id', 'name', 'price')->get();
+
+        return Inertia::render('offers/Create', [
+            'products' => $products,
         ]);
     }
 
     public function store(Request $request)
     {
-        $request->validate([
-            'offer_type' => 'required|in:coupon,delivery,product,cart',
-            'discount_type' => 'required|in:percentage,fixed',
-            'discount_value' => 'required|numeric',
+        $validated = $request->validate([
+            'offer_type' => 'required|in:coupon,product,cart',
             'code' => 'nullable|string|unique:offers,code',
+            'discount_type' => 'required|in:percentage,fixed',
+            'discount_value' => 'required|numeric|min:0',
+            'min_order_amount' => 'nullable|numeric|min:0',
+            'max_discount' => 'nullable|numeric|min:0',
+            'product_id' => 'nullable|array',
+            'product_id.*' => 'exists:products,id',
+            'usage_limit' => 'nullable|integer|min:0',
+            'starts_at' => 'nullable|date',
+            'expires_at' => 'nullable|date|after_or_equal:starts_at',
+            'active' => 'boolean',
         ]);
 
-        Offer::create($request->all());
+        $validated['product_id'] = $request->product_id ? json_encode($request->product_id) : null;
+
+        Offer::create($validated);
 
         return redirect()->route('offers.index')->with('success', 'Offer created successfully.');
     }
 
     public function edit(Offer $offer)
     {
-        return Inertia::render('offers/Form', [
+        $products = Product::select('id', 'name', 'price')->get();
+
+        return Inertia::render('offers/Edit', [
             'offer' => $offer,
+            'products' => $products,
         ]);
     }
 
     public function update(Request $request, Offer $offer)
     {
-        $request->validate([
-            'offer_type' => 'required|in:coupon,delivery,product,cart',
-            'discount_type' => 'required|in:percentage,fixed',
-            'discount_value' => 'required|numeric',
+        $validated = $request->validate([
+            'offer_type' => 'required|in:coupon,product,cart',
             'code' => 'nullable|string|unique:offers,code,' . $offer->id,
+            'discount_type' => 'required|in:percentage,fixed',
+            'discount_value' => 'required|numeric|min:0',
+            'min_order_amount' => 'nullable|numeric|min:0',
+            'max_discount' => 'nullable|numeric|min:0',
+            'product_id' => 'nullable|array',
+            'product_id.*' => 'exists:products,id',
+            'usage_limit' => 'nullable|integer|min:0',
+            'starts_at' => 'nullable|date',
+            'expires_at' => 'nullable|date|after_or_equal:starts_at',
+            'active' => 'boolean',
         ]);
 
-        $offer->update($request->all());
+        $validated['product_id'] = $request->product_id ? json_encode($request->product_id) : null;
+
+        $offer->update($validated);
 
         return redirect()->route('offers.index')->with('success', 'Offer updated successfully.');
     }
@@ -69,6 +88,7 @@ class OfferController extends Controller
     public function destroy(Offer $offer)
     {
         $offer->delete();
-        return redirect()->route('offers.index')->with('success', 'Offer deleted successfully.');
+
+        return redirect()->route('offers.Index')->with('success', 'Offer deleted.');
     }
 }

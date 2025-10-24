@@ -1,84 +1,104 @@
 <template>
+  <div>
     <Label v-if="label">{{ label }}</Label>
     <div
-        class="group relative aspect-square w-full cursor-pointer overflow-hidden rounded-lg border-2 border-dashed border-gray-500 transition duration-300"
-        @dragover.prevent
-        @drop.prevent="handleDrop"
-        @click="triggerFileInput"
-        :class="{
-            'aspect-video': type === 'video',
-            'aspect-square': type === 'square',
-        }"
+      class="group relative aspect-square w-full cursor-pointer overflow-hidden rounded-lg border-2 border-dashed border-gray-500 transition duration-300"
+      @dragover.prevent
+      @drop.prevent="handleDrop"
+      @click="triggerFileInput"
+      :class="{
+        'aspect-video': type === 'video',
+        'aspect-square': type === 'square',
+      }"
     >
-        <!-- File input (fully hidden) -->
-        <input ref="fileInput" type="file" accept="image/*" class="hidden" @change="handleFileSelect" />
+      <!-- Hidden file input -->
+      <input
+        ref="fileInput"
+        type="file"
+        accept="image/*"
+        class="hidden"
+        @change="handleFileSelect"
+      />
 
-        <!-- Image or Placeholder -->
-        <div class="absolute inset-0 flex items-center justify-center transition-all">
-            <img v-if="preview" :src="preview" class="h-full w-full object-cover transition duration-300 group-hover:blur-sm" />
-            <div v-else class="text-sm"> <Icon name="upload" class="w-6 h-6 opacity-55"/> </div>
+      <!-- Image preview or placeholder -->
+      <div class="absolute inset-0 flex items-center justify-center transition-all">
+        <img
+          v-if="preview"
+          :src="preview"
+          class="h-full w-full object-cover transition duration-300 group-hover:blur-sm"
+        />
+        <div v-else class="text-sm text-gray-500 text-center">
+          <Icon name="upload" class="w-6 h-6 opacity-55 mx-auto mb-1" />
+          <p>Click or Drop Image</p>
         </div>
+      </div>
 
-        <!-- Hover overlay -->
-        <div class="absolute inset-0 z-10 flex items-center justify-center opacity-0 transition duration-300 group-hover:opacity-50">
-            <Icon name="upload" class="w-6 h-6" />
-        </div>
+      <!-- Hover overlay -->
+      <div
+        class="absolute inset-0 z-10 flex items-center justify-center opacity-0 transition duration-300 group-hover:opacity-70 bg-black/50 text-white"
+      >
+        <Icon name="upload" class="w-6 h-6 mr-2" />
+        <span>Change</span>
+      </div>
     </div>
+  </div>
 </template>
 
-<script lang="ts" setup>
-import { onBeforeUnmount, ref, watch } from 'vue';
-import Icon from './Icon.vue';
+<script setup lang="ts">
+import { ref, watch, onBeforeUnmount } from "vue";
+import Icon from "./Icon.vue";
 
 const props = defineProps({
-    modelValue: String, // now store Base64 instead of File
-    existingUrl: String,
-    label: String,
-    type: String,
+  modelValue: [File, String, null],
+  existingUrl: String,
+  label: String,
+  type: { type: String, default: "square" },
 });
-const emit = defineEmits(['update:modelValue']);
 
-const fileInput = ref(null);
+const emit = defineEmits(["update:modelValue"]);
+const fileInput = ref<HTMLInputElement | null>(null);
 const preview = ref<string | null>(props.existingUrl || null);
 
 watch(
-    () => props.modelValue,
-    (newVal) => {
-        // if it's base64, just use it directly
-        if (typeof newVal === 'string' && newVal.startsWith('data:image')) {
-            preview.value = newVal;
-        }
-    },
-    { immediate: true },
+  () => props.modelValue,
+  (val) => {
+    if (val instanceof File) {
+      preview.value = URL.createObjectURL(val);
+    } else if (typeof val === "string" && val) {
+      preview.value = val.startsWith("/") ? val : `/${val}`;
+    } else if (props.existingUrl) {
+      preview.value = props.existingUrl.startsWith("/")
+        ? props.existingUrl
+        : `/${props.existingUrl}`;
+    } else {
+      preview.value = null;
+    }
+  },
+  { immediate: true }
 );
 
-function handleFile(file) {
-    const reader = new FileReader();
-    reader.onload = (e) => {
-        const base64 = e.target?.result;
-        preview.value = base64;
-        emit('update:modelValue', base64); // emit Base64 string
-    };
-    reader.readAsDataURL(file);
+function handleFile(file: File) {
+  emit("update:modelValue", file);
+  preview.value = URL.createObjectURL(file);
 }
 
-function handleFileSelect(e) {
-    const file = e.target.files[0];
-    if (file) handleFile(file);
+function handleFileSelect(e: Event) {
+  const file = (e.target as HTMLInputElement).files?.[0];
+  if (file) handleFile(file);
 }
 
-function handleDrop(e) {
-    const file = e.dataTransfer.files[0];
-    if (file) handleFile(file);
+function handleDrop(e: DragEvent) {
+  const file = e.dataTransfer?.files?.[0];
+  if (file) handleFile(file);
 }
 
 function triggerFileInput() {
-    fileInput.value?.click();
+  fileInput.value?.click();
 }
 
 onBeforeUnmount(() => {
-    if (preview.value && preview.value.startsWith('blob:')) {
-        URL.revokeObjectURL(preview.value);
-    }
+  if (preview.value?.startsWith("blob:")) {
+    URL.revokeObjectURL(preview.value);
+  }
 });
 </script>

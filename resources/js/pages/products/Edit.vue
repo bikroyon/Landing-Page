@@ -36,15 +36,23 @@
           </div>
 
           <!-- Right: Image -->
-          <div class="flex items-start justify-center mt-20">
-            <ImageUploader />
+          <div class="flex items-start justify-center mt-10">
+            <ImageUploader
+              v-model="form.image"
+              :existing-url="product.image ? `/${product.image}` : null"
+              label="Product Image"
+            />
           </div>
         </div>
 
         <!-- Description -->
         <div>
           <label class="block font-medium mb-1">Description</label>
-          <Textarea v-model="form.description" rows="4" class="w-full border p-2 rounded"></Textarea>
+          <textarea
+            v-model="form.description"
+            rows="4"
+            class="w-full border p-2 rounded"
+          ></textarea>
         </div>
       </form>
     </div>
@@ -53,15 +61,14 @@
 
 <script setup lang="ts">
 import AppLayout from "@/layouts/AppLayout.vue";
-import { Head, useForm } from "@inertiajs/vue3";
-import { ref } from "vue";
+import { Head, useForm, router } from "@inertiajs/vue3";
 import Button from "@/components/ui/button/Button.vue";
 import Input from "@/components/ui/input/Input.vue";
 import ToggleSwitch from "@/components/ToggleSwitch.vue";
 import PriceVariations from "@/components/PriceVariations.vue";
 import ImageUploader from "@/components/ImageUploader.vue";
 
-const props = defineProps({
+const { product } = defineProps({
   product: {
     type: Object,
     required: true,
@@ -70,20 +77,40 @@ const props = defineProps({
 
 const breadcrumbs = [
   { title: "Products", href: "/products" },
-  { title: "Edit", href: `/products/${props.product.id}/edit` },
+  { title: "Edit", href: `/products/${product.id}/edit` },
 ];
 
-// Initialize form with existing product data
 const form = useForm({
-  name: props.product.name || "",
-  description: props.product.description || "",
-  price: props.product.price || "",
-  image: props.product.image || "",
-  status: props.product.status ?? true,
-  variations: props.product.variations || [],
+  name: product.name || "",
+  description: product.description || "",
+  price: product.price || "",
+  image: "", // file will be uploaded if selected
+  status: product.status ?? true,
+  variations: product.variations || [],
 });
 
 function submit() {
-  form.put(`/products/${props.product.id}`);
+  const formData = new FormData();
+  formData.append("name", form.name);
+  formData.append("description", form.description);
+  formData.append("price", form.price || 0);
+  formData.append("status", form.status ? 1 : 0);
+  formData.append("variations", JSON.stringify(form.variations));
+
+  // Add image only if changed
+  if (form.image instanceof File) {
+    formData.append("image", form.image);
+  }
+
+  // IMPORTANT: Tell Laravel this is PUT
+  formData.append("_method", "PUT");
+
+  router.post(`/products/${product.id}`, formData, {
+    forceFormData: true,
+    onSuccess: () => {
+      console.log("Product updated!");
+    },
+  });
 }
+
 </script>

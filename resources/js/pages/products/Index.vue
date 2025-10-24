@@ -55,10 +55,15 @@
                             </td>
                             <td class="flex items-center gap-2 p-2">
                                 <img
-                                    src="https://placehold.co/600x400"
+                                    :src="
+                                        product.image
+                                            ? `${product.image}`
+                                            : 'https://placehold.co/600x400'
+                                    "
                                     alt="product"
                                     class="h-10 w-10 rounded object-cover"
                                 />
+
                                 <div class="flex flex-col">
                                     <span
                                         class="w-40 truncate font-medium sm:w-60"
@@ -70,19 +75,16 @@
                                     >
                                         {{
                                             product.description ||
-                                            'Short description...'
+                                            'Product description...'
                                         }}
                                     </span>
                                 </div>
                             </td>
                             <td class="p-2 text-sm">
-                                {{ product.product_type }}
-                            </td>
-                            <td class="p-2 text-sm">
-                                ${{ Number(product.price).toFixed(2) }}
+                                {{ Number(product.price).toFixed(2) }}৳
                             </td>
 
-                            <td class="p-2 text-sm">{{ product.statusa }}</td>
+                            <td class="p-2 text-sm">  {{ product.status ? 'Active' : 'Inactive' }}</td>
                             <td class="p-2 text-center">
                                 <!-- Edit -->
                                 <Link :href="`/products/${product.id}/edit`">
