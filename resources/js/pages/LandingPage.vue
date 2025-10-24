@@ -12,7 +12,12 @@
                     <CustomerInfo :form="form" :readonly="!!user" />
 
                     <!-- Delivery Zone -->
-                    <SelectDeliveryZone :zones="deliveryZones" :form="form" />
+                    <SelectDeliveryZone
+                        :zones="deliveryZones"
+                        :form="form"
+                        :subtotal="subtotal"
+                    />
+
                     <div class="flex flex-col">
                         <label for="additional_note"> Additional Note</label>
                         <textarea name="additional_note" id=""></textarea>
@@ -23,7 +28,7 @@
                     <OrderSummary
                         :items="form.items"
                         :products="products"
-                        :deliveryFee="deliveryFee"
+                        :deliveryFee="form.delivery_fee || 0"
                         :discount="discount"
                     />
 

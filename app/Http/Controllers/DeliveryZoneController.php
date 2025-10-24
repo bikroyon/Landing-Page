@@ -4,29 +4,40 @@ namespace App\Http\Controllers;
 
 use App\Models\DeliveryZone;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
 
 class DeliveryZoneController extends Controller
 {
-    /**
-     * Display a listing of the delivery zones.
-     */
-    public function index()
+    /** 🏠 List all delivery zones */
+    public function index(Request $request)
     {
-        $zones = DeliveryZone::orderBy('name')->get();
-        return view('admin.delivery_zones.index', compact('zones'));
+        $search = $request->get('search');
+
+        $zones = DeliveryZone::query()
+            ->when($search, function ($query, $search) {
+                $query->where('name', 'like', "%{$search}%")
+                      ->orWhere('region', 'like', "%{$search}%")
+                      ->orWhere('area', 'like', "%{$search}%");
+            })
+            ->orderBy('id', 'desc')
+            ->paginate(10)
+            ->withQueryString();
+
+        return Inertia::render('delivery/Index', [
+            'zones' => $zones,
+            'filters' => [
+                'search' => $search,
+            ],
+        ]);
     }
 
-    /**
-     * Show the form for creating a new delivery zone.
-     */
+    /** ➕ Show create form */
     public function create()
     {
-        return view('admin.delivery_zones.create');
+        return Inertia::render('delivery/Create');
     }
 
-    /**
-     * Store a newly created delivery zone in storage.
-     */
+    /** 💾 Store new zone */
     public function store(Request $request)
     {
         $validated = $request->validate([
@@ -41,28 +52,18 @@ class DeliveryZoneController extends Controller
         DeliveryZone::create($validated);
 
         return redirect()->route('delivery-zones.index')
-                         ->with('success', 'Delivery Zone created successfully.');
+            ->with('success', 'Delivery Zone created successfully.');
     }
 
-    /**
-     * Display the specified delivery zone.
-     */
-    public function show(DeliveryZone $deliveryZone)
-    {
-        return view('admin.delivery_zones.show', compact('deliveryZone'));
-    }
-
-    /**
-     * Show the form for editing the specified delivery zone.
-     */
+    /** ✏️ Edit page */
     public function edit(DeliveryZone $deliveryZone)
     {
-        return view('admin.delivery_zones.edit', compact('deliveryZone'));
+        return Inertia::render('delivery/Edit', [
+            'zone' => $deliveryZone,
+        ]);
     }
 
-    /**
-     * Update the specified delivery zone in storage.
-     */
+    /** 🔄 Update existing zone */
     public function update(Request $request, DeliveryZone $deliveryZone)
     {
         $validated = $request->validate([
@@ -77,29 +78,22 @@ class DeliveryZoneController extends Controller
         $deliveryZone->update($validated);
 
         return redirect()->route('delivery-zones.index')
-                         ->with('success', 'Delivery Zone updated successfully.');
+            ->with('success', 'Delivery Zone updated successfully.');
     }
 
-    /**
-     * Remove the specified delivery zone from storage.
-     */
+    /** ❌ Delete zone */
     public function destroy(DeliveryZone $deliveryZone)
     {
         $deliveryZone->delete();
 
-        return redirect()->route('delivery-zones.index')
-                         ->with('success', 'Delivery Zone deleted successfully.');
+        return back()->with('success', 'Delivery Zone deleted successfully.');
     }
 
-    /**
-     * Toggle the status of a delivery zone (active/inactive)
-     */
+    /** ✅ Toggle Active/Inactive status */
     public function toggleStatus(DeliveryZone $deliveryZone)
     {
-        $deliveryZone->status = !$deliveryZone->status;
-        $deliveryZone->save();
+        $deliveryZone->update(['status' => !$deliveryZone->status]);
 
-        return redirect()->route('delivery-zones.index')
-                         ->with('success', 'Delivery Zone status updated successfully.');
+        return back()->with('success', 'Zone status updated successfully.');
     }
 }
