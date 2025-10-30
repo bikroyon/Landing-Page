@@ -7,19 +7,12 @@ use App\Models\OrderItem;
 use App\Models\Product;
 use App\Models\DeliveryZone;
 use App\Models\PaymentMethod;
-use App\Services\OfferService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 
 class OrderController extends Controller
 {
-    protected OfferService $offerService;
-
-    public function __construct(OfferService $offerService)
-    {
-        $this->offerService = $offerService;
-    }
 
 public function index(Request $request)
 {
@@ -73,11 +66,6 @@ public function store(Request $request)
         ? DeliveryZone::find($request->delivery_zone_id)->fee
         : 0;
 
-    $discount = $this->offerService->calculateTotalDiscount([
-        'items' => $request->items,
-        'coupon_code' => $request->coupon_code,
-        'delivery_zone_id' => $request->delivery_zone_id,
-    ]);
 
 
 

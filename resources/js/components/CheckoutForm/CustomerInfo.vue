@@ -1,6 +1,6 @@
 <template>
   <div class="mt-4">
-    <h2 class="text-xl font-bold mb-2">Customer Information</h2>
+    <h2 class="text-xl font-bold mb-2">{{ title }}</h2>
     <div class="flex flex-col gap-2">
       <input v-model="form.customer_name" placeholder="Name" class="border p-2 rounded" required />
       <input v-model="form.customer_phone" placeholder="Phone" class="border p-2 rounded" required />
@@ -20,5 +20,6 @@ const props = defineProps<{
     customer_email: string,
     customer_address: string,
   }
+  title?: string;
 }>();
 </script>

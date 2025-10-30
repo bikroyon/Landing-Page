@@ -24,8 +24,7 @@ class PaymentMethodSeeder extends Seeder
             'type' => 'mobile',
             'provider' => 'Bkash',
             'account_number' => '017XXXXXXXX',
-            'qr_code' => 'payments/bkash_qr.png',
-            'logo' => 'payments/bkash_logo.png',
+            'qr_code' =>  'https://placehold.co/600x400?text=QR',
             'status' => true,
         ]);
 
@@ -36,8 +35,18 @@ class PaymentMethodSeeder extends Seeder
             'type' => 'mobile',
             'provider' => 'Nagad',
             'account_number' => '018XXXXXXXX',
-            'qr_code' => 'payments/nagad_qr.png',
-            'logo' => 'payments/nagad_logo.png',
+            'qr_code' => 'https://placehold.co/600x400?text=QR',
+            'status' => true,
+        ]);
+
+        // Mobile Banking: Nagad
+        PaymentMethod::create([
+            'name' => 'Rocket',
+            'code' => 'ROCKET',
+            'type' => 'mobile',
+            'provider' => 'Rocket',
+            'account_number' => '018XXXXXXXX',
+            'qr_code' =>  'https://placehold.co/600x400?text=QR',
             'status' => true,
         ]);
     }

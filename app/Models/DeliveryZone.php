@@ -19,10 +19,6 @@ class DeliveryZone extends Model
     ];
 
     // Relationships
-    public function offers()
-    {
-        return $this->hasMany(Offer::class);
-    }
 
     public function orders()
     {

@@ -12,12 +12,9 @@ return new class extends Migration {
             $table->string('name'); // e.g. "Cash on Delivery", "Bkash"
             $table->string('code')->unique(); // e.g. "COD", "BKASH", "NAGAD"
             $table->enum('type', ['cod', 'mobile']); // Only COD & Mobile banking
-
             $table->string('provider')->nullable();   // For mobile, e.g. "Bkash"
             $table->string('account_number')->nullable(); // Merchant/Agent number
             $table->string('qr_code')->nullable();    // Path or URL of QR code image
-            $table->string('logo')->nullable();       // Path or URL of logo image
-
             $table->boolean('status')->default(true);
             $table->timestamps();
         });

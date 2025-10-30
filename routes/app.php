@@ -3,10 +3,10 @@
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\DeliveryZoneController;
 use App\Http\Controllers\LandingPageController;
-use App\Http\Controllers\OfferController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ReviewController;
+use App\Http\Controllers\StoreSettingController;
 use Illuminate\Support\Facades\Route;
 
 // Guest landing page
@@ -33,10 +33,13 @@ Route::middleware(['auth'])->group(function () {
     // Customer review routes
     Route::post('/reviews/{product}', [ReviewController::class, 'store'])->name('reviews.store');
     Route::post('/reviews/{review}/update', [ReviewController::class, 'update'])->name('reviews.update');
-    //offer routes
-    Route::resource('offers', OfferController::class);
+
     // Delivery Zone Management
     Route::resource('delivery-zones', DeliveryZoneController::class);
     Route::post('delivery-zones/{deliveryZone}/toggle-status', [DeliveryZoneController::class, 'toggleStatus'])
         ->name('delivery-zones.toggleStatus');
+
+    Route::get('/store-settings', [StoreSettingController::class, 'index'])->name('settings.index');
+    Route::get('/store-settings/edit', [StoreSettingController::class, 'edit'])->name('settings.edit');
+    Route::post('/store-settings/update', [StoreSettingController::class, 'update'])->name('settings.update');
 });

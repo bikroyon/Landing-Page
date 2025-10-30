@@ -16,7 +16,6 @@ class PaymentMethod extends Model
         'provider',
         'account_number',
         'qr_code',
-        'logo',
         'status',
     ];
 

@@ -42,7 +42,17 @@
                                     class="w-full rounded border p-2"
                                 />
                             </div>
-
+                            <div class="w-full">
+                                <label class="mb-1 block font-medium"
+                                    >Previous Price</label
+                                >
+                                <Input
+                                    v-model="form.prev_price"
+                                    type="number"
+                                    step="0.01"
+                                    class="w-full rounded border p-2"
+                                />
+                            </div>
                             <div>
                                 <label class="mb-1 block font-medium"
                                     >Status</label
@@ -55,7 +65,7 @@
                     </div>
 
                     <!-- Right: Image -->
-                    <div class=" flex items-center justify-center">
+                    <div class="flex items-center justify-center">
                         <ImageUploader v-model="form.image" />
                     </div>
                 </div>
@@ -80,7 +90,7 @@ import ToggleSwitch from '@/components/ToggleSwitch.vue';
 import Button from '@/components/ui/button/Button.vue';
 import Input from '@/components/ui/input/Input.vue';
 import AppLayout from '@/layouts/AppLayout.vue';
-import { Head, useForm,router } from '@inertiajs/vue3';
+import { Head, router, useForm } from '@inertiajs/vue3';
 
 const breadcrumbs = [
     { title: 'Products', href: '/products' },
@@ -91,6 +101,7 @@ const form = useForm({
     name: '',
     description: '',
     price: '',
+    prev_price: '',
     image: '',
     status: true,
     variations: [],
@@ -102,6 +113,7 @@ function submit() {
     formData.append('name', form.name);
     formData.append('description', form.description);
     formData.append('price', form.price || 0);
+    formData.append('price', form.prev_price || 0);
     formData.append('status', form.status ? 1 : 0);
 
     // Add variations JSON + images
@@ -120,6 +132,4 @@ function submit() {
 
     router.post('/products', formData);
 }
-
-
 </script>

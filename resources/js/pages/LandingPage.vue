@@ -1,75 +1,92 @@
 <template>
-    <div class="container mx-auto p-6">
-        <h1 class="mb-4 text-2xl font-bold">Our Products</h1>
+    <LandingPageLayout>
+        <LandingPageDesign />
+        <div class="container mx-auto p-6">
+            <div>
+                <h2 class="mb-4 text-2xl font-bold">
+                    {{ store_settings.products_title }}
+                </h2>
+            </div>
 
-        <form @submit.prevent="submitOrder" class="space-y-4">
-            <!-- Select Products -->
-            <SelectProducts :products="products" v-model:items="form.items" />
+            <form @submit.prevent="submitOrder" class="space-y-4">
+                <!-- Select Products -->
+                <SelectProducts
+                    :products="products"
+                    v-model:items="form.items"
+                />
 
-            <div class="flex flex-row justify-between gap-4">
-                <div class="w-7/12">
-                    <!-- Customer Info -->
-                    <CustomerInfo :form="form" :readonly="!!user" />
+                <div class="flex flex-row justify-between gap-4">
+                    <div class="w-7/12">
+                        <!-- Customer Info -->
+                        <CustomerInfo
+                            :title="store_settings.customer_info_title"
+                            :form="form"
+                            :readonly="!!user"
+                        />
 
-                    <!-- Delivery Zone -->
-                    <SelectDeliveryZone
-                        :zones="deliveryZones"
-                        :form="form"
-                        :subtotal="subtotal"
-                    />
+                        <!-- Delivery Zone -->
+                        <SelectDeliveryZone
+                            :title="store_settings.delivery_zone_title"
+                            :zones="deliveryZones"
+                            :form="form"
+                            :subtotal="subtotal"
+                        />
 
-                    <div class="flex flex-col">
-                        <label for="additional_note"> Additional Note</label>
-                        <textarea name="additional_note" id=""></textarea>
+                        <div class="flex flex-col">
+                            <label for="additional_note">
+                                {{ store_settings.additional_note_title }}
+                            </label>
+                            <textarea name="additional_note" id=""></textarea>
+                        </div>
+                    </div>
+                    <div class="w-5/12">
+                        <!-- Order Summary -->
+                        <OrderSummary
+                            :title="store_settings.order_summary_title"
+                            :items="form.items"
+                            :products="products"
+                            :deliveryFee="form.delivery_fee || 0"
+                            :discount="discount"
+                        />
+                        <!-- Payment Method -->
+                        <SelectPaymentMethod
+                            :title="store_settings.payment_title"
+                            :paymentMethods="paymentMethods"
+                            :form="form"
+                        />
+
+                        <!-- Submit Button -->
+                        <button
+                            type="submit"
+                            class="mt-4 rounded bg-blue-600 px-4 py-2 text-white"
+                            :disabled="!hasSelectedItems || form.processing"
+                        >
+                            <span v-if="form.processing">Placing Order...</span>
+                            <span v-else>{{
+                                store_settings.submit_button
+                            }}</span>
+                        </button>
                     </div>
                 </div>
-                <div class="w-5/12">
-                    <!-- Order Summary -->
-                    <OrderSummary
-                        :items="form.items"
-                        :products="products"
-                        :deliveryFee="form.delivery_fee || 0"
-                        :discount="discount"
-                    />
-
-                    <!-- Coupon -->
-                    <CouponCode
-                        :form="form"
-                        :discount="discount"
-                        :offers="offers"
-                    />
-                    <!-- Payment Method -->
-                    <SelectPaymentMethod
-                        :paymentMethods="paymentMethods"
-                        :form="form"
-                    />
-
-                    <!-- Submit Button -->
-                    <button
-                        type="submit"
-                        class="mt-4 rounded bg-blue-600 px-4 py-2 text-white"
-                        :disabled="!hasSelectedItems || form.processing"
-                    >
-                        <span v-if="form.processing">Placing Order...</span>
-                        <span v-else>Place Order</span>
-                    </button>
-                </div>
-            </div>
-        </form>
-    </div>
+            </form>
+        </div>
+    </LandingPageLayout>
 </template>
 
 <script setup lang="ts">
-import CouponCode from '@/components/CheckoutForm/CouponCode.vue';
 import CustomerInfo from '@/components/CheckoutForm/CustomerInfo.vue';
 import OrderSummary from '@/components/CheckoutForm/OrderSummary.vue';
 import SelectDeliveryZone from '@/components/CheckoutForm/SelectDeliveryZone.vue';
 import SelectPaymentMethod from '@/components/CheckoutForm/SelectPaymentMethod.vue';
 import SelectProducts from '@/components/CheckoutForm/SelectProducts.vue';
-import type { DeliveryZone, PaymentMethod, Product } from '@/types';
-import { useForm } from '@inertiajs/vue3';
+import LandingPageDesign from '@/components/LandingPage/Design.vue';
+import LandingPageLayout from '@/layouts/LandingPageLayout.vue';
+import type { DeliveryZone, PaymentMethod, Product, Setting } from '@/types';
+import { useForm, usePage } from '@inertiajs/vue3';
 import { computed, ref, watch } from 'vue';
 
+const page = usePage();
+const settings = page.props.settings;
 const props = defineProps<{
     user?: {
         name: string;
@@ -77,6 +94,7 @@ const props = defineProps<{
         phone: string;
         address: string;
     } | null;
+    settings?: Setting[];
     products?: Product[];
     deliveryZones?: DeliveryZone[];
     paymentMethods?: PaymentMethod[];
@@ -84,6 +102,7 @@ const props = defineProps<{
 }>();
 
 const user = props.user || null;
+const store_settings = computed(() => props.settings || []);
 const products = computed(() => props.products || []);
 const deliveryZones = computed(() => props.deliveryZones || []);
 const paymentMethods = computed(() => props.paymentMethods || []);

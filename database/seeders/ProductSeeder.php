@@ -13,6 +13,7 @@ class ProductSeeder extends Seeder
             'name' => 'Cotton T-Shirt',
             'description' => 'Comfortable cotton T-shirt in multiple sizes.',
             'price' => 500,
+            'prev_price' => 600,
             'status' => true,
             'variations' => [
                 ['name' => 'Small', 'extra_price' => 0, 'sku' => 'TS-S', 'stock' => 50],
@@ -26,6 +27,7 @@ class ProductSeeder extends Seeder
             'name' => 'Leather Wallet',
             'description' => 'Genuine leather wallet with multiple compartments.',
             'price' => 1200,
+            'prev_price' => 1500,
             'status' => true,
             'variations' => [
                 ['name' => 'Brown', 'extra_price' => 0, 'sku' => 'LW-BR', 'stock' => 25],
@@ -38,6 +40,7 @@ class ProductSeeder extends Seeder
             'name' => 'Running Shoes',
             'description' => 'Lightweight running shoes for all terrains.',
             'price' => 3000,
+            'prev_price' => 5000,
             'status' => true,
             'variations' => [
                 ['name' => 'Size 8', 'extra_price' => 0, 'sku' => 'RS-8', 'stock' => 15],

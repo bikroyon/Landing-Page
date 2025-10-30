@@ -12,7 +12,7 @@
         <div class="dot absolute left-1 top-1 bg-white w-6 h-6 rounded-full transition"
           :class="modelValue ? 'translate-x-6' : 'translate-x-0'"></div>
       </div>
-      <div class="ml-3 text-gray-700 text-sm">
+      <div v-if="labal" class="ml-3 text-gray-700 text-sm">
         {{ modelValue ? activeLabel : inactiveLabel }}
       </div>
     </label>
@@ -22,6 +22,7 @@
 <script lang="ts" setup>
 defineProps({
   modelValue: Boolean,
+  labal: Boolean,
   activeLabel: {
     type: String,
     default: 'Active',

@@ -12,7 +12,6 @@ return new class extends Migration {
             $table->foreignId('user_id')->nullable()->constrained()->cascadeOnDelete();
             $table->foreignId('delivery_zone_id')->nullable()->constrained()->cascadeOnDelete();
             $table->foreignId('payment_method_id')->nullable()->constrained()->cascadeOnDelete();
-            $table->foreignId('offer_id')->nullable()->constrained()->cascadeOnDelete();
 
             $table->string('customer_name');
             $table->string('customer_phone');

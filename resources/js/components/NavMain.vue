@@ -9,6 +9,7 @@ import {
 import { type NavItem } from '@/types';
 import { Link, usePage } from '@inertiajs/vue3';
 import { onMounted, ref } from 'vue';
+import { Icon } from '@iconify/vue';
 
 const page = usePage();
 const chillActive = ref<NavItem | null>(null);

@@ -1,6 +1,6 @@
 <template>
     <div class="mt-4 rounded border bg-gray-50 p-4">
-        <h2 class="mb-2 text-xl font-bold">Order Summary</h2>
+        <h2 class="mb-2 text-xl font-bold">{{ title }}</h2>
 
         <div
             v-for="item in itemsWithDetails"
@@ -51,6 +51,7 @@
 import { computed, defineProps } from 'vue';
 
 const props = defineProps<{
+    title?: string;
     items: Array<{
         product_id: number;
         quantity: number;

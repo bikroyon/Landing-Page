@@ -9,7 +9,6 @@ use App\Models\Product;
 use App\Models\User;
 use App\Models\DeliveryZone;
 use App\Models\PaymentMethod;
-use App\Models\Offer;
 
 class OrderSeeder extends Seeder
 {
@@ -29,7 +28,6 @@ class OrderSeeder extends Seeder
 
         $zone = DeliveryZone::first();
         $payment = PaymentMethod::first();
-        $offer = Offer::where('offer_type', 'coupon')->first();
 
         foreach ($products as $product) {
             $order = Order::create([
@@ -40,7 +38,6 @@ class OrderSeeder extends Seeder
                 'customer_address' => $customer->address,
                 'delivery_zone_id' => $zone?->id,
                 'payment_method_id' => $payment?->id,
-                'offer_id' => $offer?->id,
                 'subtotal' => $product->price,
                 'total_amount' => $product->price,
                 'status' => 'completed',

@@ -14,7 +14,6 @@ class Order extends Model
         'user_id',
         'delivery_zone_id',
         'payment_method_id',
-        'offer_id',
         'customer_name',
         'customer_phone',
         'customer_email',
@@ -44,10 +43,6 @@ class Order extends Model
         return $this->belongsTo(PaymentMethod::class);
     }
 
-    public function offer()
-    {
-        return $this->belongsTo(Offer::class);
-    }
 
     public function items()
     {

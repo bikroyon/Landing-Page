@@ -4,7 +4,6 @@ namespace Database\Seeders;
 
 use App\Models\Review;
 use App\Models\User;
-// use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -21,11 +20,11 @@ class DatabaseSeeder extends Seeder
             RoleSeeder::class,
             UserSeeder::class,
             AccessToRoleSeeder::class,
-                DeliveryZoneSeeder::class,
-    PaymentMethodSeeder::class,
-    OfferSeeder::class,
-    OrderSeeder::class,
-    ReviewSeeder::class,
+            DeliveryZoneSeeder::class,
+            PaymentMethodSeeder::class,
+            OrderSeeder::class,
+            ReviewSeeder::class,
+            StoreSettingSeeder::class,
         ]);
     }
 }

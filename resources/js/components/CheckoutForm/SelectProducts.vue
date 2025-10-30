@@ -81,8 +81,11 @@
                             (
                                 quantities[product.id] * getPrice(product) ||
                                 getPrice(product)
-                            ).toFixed(2)
+                            )
                         }} ৳
+                    </p>
+                    <p class="text-right font-bold line-through text-gray-400 text-sm" v-if="product.prev_price && product.prev_price > product.price" >
+                        {{ product.prev_price }} ৳
                     </p>
                 </div>
             </div>
