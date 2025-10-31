@@ -41,71 +41,92 @@ class LandingPageController extends Controller
      */
     public function store(Request $request)
     {
+        // 1️⃣ Validate Request
         $data = $request->validate([
             'customer_name' => 'required|string|max:255',
-            'customer_phone' => 'required|string|max:20',
-            'customer_email' => 'nullable|email|max:255',
-            'customer_address' => 'required|string|max:500',
+            'customer_phone' => 'required|string|max:50',
+            'customer_email' => 'nullable|email',
+            'customer_address' => 'required|string',
+
             'items' => 'required|array|min:1',
             'items.*.product_id' => 'required|exists:products,id',
             'items.*.quantity' => 'required|integer|min:1',
-            'delivery_zone_id' => 'nullable|exists:delivery_zones,id',
-            'payment_method_id' => 'nullable|exists:payment_methods,id',
+            'items.*.variant_index' => 'required|integer|min:0',
+            'items.*.extra_price' => 'nullable|numeric|min:0',
+
+            'delivery_zone_id' => 'required|exists:delivery_zones,id',
+            'payment_method_id' => 'required|exists:payment_methods,id',
+
+            'additional_note' => 'nullable|string',
+            'transaction_id' => 'nullable|string|max:255',
+            'transaction_mobile_number' => 'nullable|string|max:255',
         ]);
 
         $user = Auth::user();
 
-        // ✅ Use logged-in user's info if available
-        $customerName = $user ? $user->name : $data['customer_name'];
-        $customerPhone = $user ? $user->phone : $data['customer_phone'];
-        $customerEmail = $user ? $user->email : $data['customer_email'] ?? null;
-        $customerAddress = $user ? $user->address : $data['customer_address'];
-
-        // Calculate subtotal
+        // 2️⃣ Calculate Subtotal
         $subtotal = 0;
         foreach ($data['items'] as $item) {
-            $product = Product::find($item['product_id']);
-            $subtotal += $product->price * $item['quantity'];
+            $product = Product::findOrFail($item['product_id']);
+            $variantPrice = $product->variants[$item['variant_index']]['price'] ?? $product->price;
+            $extra = $item['extra_price'] ?? 0;
+
+            $subtotal += ($variantPrice + $extra) * $item['quantity'];
         }
 
+        // 3️⃣ Delivery Fee
+        $zone = DeliveryZone::findOrFail($data['delivery_zone_id']);
+        $deliveryFee = $zone->effectiveFee($subtotal);
 
-        // Delivery fee
-        $deliveryFee = 0;
-        if (!empty($data['delivery_zone_id'])) {
-            $deliveryZone = DeliveryZone::find($data['delivery_zone_id']);
-            $deliveryFee = $deliveryZone?->effectiveFee($subtotal) ?? 0;
-        }
+        // 4️⃣ Total Discount (currently 0)
+        $totalDiscount = 0;
 
-        $totalAmount = max(0, $subtotal + $deliveryFee - $totalDiscount);
+        // 5️⃣ Total Amount
+        $totalAmount = $subtotal + $deliveryFee - $totalDiscount;
 
-        // ✅ Create order linked to user if logged in
+        // 6️⃣ Create Order
         $order = Order::create([
             'user_id' => $user?->id,
-            'customer_name' => $customerName,
-            'customer_phone' => $customerPhone,
-            'customer_email' => $customerEmail,
-            'customer_address' => $customerAddress,
+            'customer_name' => $data['customer_name'],
+            'customer_phone' => $data['customer_phone'],
+            'customer_email' => $data['customer_email'],
+            'customer_address' => $data['customer_address'],
+
             'subtotal' => $subtotal,
+            'delivery_fee' => $deliveryFee,
+            'total_discount' => $totalDiscount,
             'total_amount' => $totalAmount,
-            'delivery_zone_id' => $data['delivery_zone_id'] ?? null,
-            'payment_method_id' => $data['payment_method_id'] ?? null,
+
+            'delivery_zone_id' => $zone->id,
+            'payment_method_id' => $data['payment_method_id'],
+
+            'additional_note' => $data['additional_note'],
+            'transaction_id' => $data['transaction_id'],
+            'transaction_mobile_number' => $data['transaction_mobile_number'],
+
             'status' => 'pending',
         ]);
 
-        // Create order items
+        // 7️⃣ Save Order Items
         foreach ($data['items'] as $item) {
-            $product = Product::find($item['product_id']);
-            OrderItem::create([
-                'order_id' => $order->id,
+            $product = Product::findOrFail($item['product_id']);
+            $variantPrice = $product->variants[$item['variant_index']]['price'] ?? $product->price;
+            $extra = $item['extra_price'] ?? 0;
+            $price = $variantPrice + $extra;
+
+            $order->items()->create([
                 'product_id' => $product->id,
+                'variant_index' => $item['variant_index'],
+                'extra_price' => $extra,
                 'quantity' => $item['quantity'],
-                'price' => $product->price,
-                'subtotal' => $product->price * $item['quantity'],
+                'price' => $price,
+                'subtotal' => $price * $item['quantity'],
             ]);
         }
 
         return redirect()->route('order.thankyou', $order->id);
     }
+
 
 
 

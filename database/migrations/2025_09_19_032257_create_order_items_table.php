@@ -11,11 +11,11 @@ return new class extends Migration {
             $table->id();
             $table->foreignId('order_id')->constrained()->cascadeOnDelete();
             $table->foreignId('product_id')->constrained()->cascadeOnDelete();
-
+             $table->integer('variant_index')->nullable();
+             $table->decimal('extra_price', 10, 2)->default(0);
             $table->integer('quantity')->default(1);
-            $table->decimal('price', 10, 2)->default(0);     // snapshot of product price
-            $table->decimal('subtotal', 10, 2)->default(0);  // quantity * price
-
+            $table->decimal('price', 10, 2)->default(0);   
+            $table->decimal('subtotal', 10, 2)->default(0);
             $table->timestamps();
         });
     }

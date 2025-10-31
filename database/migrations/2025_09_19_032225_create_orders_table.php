@@ -17,13 +17,14 @@ return new class extends Migration {
             $table->string('customer_phone');
             $table->string('customer_email');
             $table->text('customer_address');
+            $table->text('additional_note')->nullable();
 
-            $table->string('transaction_method')->nullable();
             $table->string('transaction_id')->nullable();
-            $table->string('transaction_number')->nullable();
-
-            $table->decimal('subtotal', 10, 2)->default(0); // sum of item subtotals
-            $table->decimal('total_amount', 10, 2)->default(0); // subtotal + delivery_fee - discount
+            $table->string('transaction_mobile_number')->nullable();
+            $table->decimal('delivery_fee', 10, 2)->default(0);
+            $table->decimal('subtotal', 10, 2)->default(0);
+            $table->decimal('total_discount', 10, 2)->default(0);
+            $table->decimal('total_amount', 10, 2)->default(0);
 
             $table->enum('status', [
                 'pending',

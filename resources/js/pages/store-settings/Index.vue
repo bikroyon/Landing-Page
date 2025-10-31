@@ -252,6 +252,55 @@
                             id="customer_info_title"
                             v-model="form.customer_info_title"
                         />
+                        <label for="customer_info_label"
+                            >Customer Info Label Enable/Disable</label
+                        >
+                        <ToggleSwitch
+                            :label="false"
+                            v-model="form.customer_info_label"
+                        />
+
+                        <label
+                            for="customer_info_name"
+                            v-if="form.customer_info_label"
+                            >Customer Name Label</label
+                        >
+                        <Input
+                            v-if="form.customer_info_label"
+                            id="customer_info_name_label"
+                            v-model="form.customer_info_name_label"
+                        />
+
+                        <label
+                            v-if="form.customer_info_label"
+                            for="customer_info_phone"
+                            >Customer Phone Label</label
+                        >
+                        <Input
+                            v-if="form.customer_info_label"
+                            id="customer_info_phone"
+                            v-model="form.customer_info_phone_label"
+                        />
+                        <label
+                            v-if="form.customer_info_label"
+                            for="customer_info_email_label"
+                            >Customer Email Label</label
+                        >
+                        <Input
+                            v-if="form.customer_info_label"
+                            id="customer_info_email_label"
+                            v-model="form.customer_info_email_label"
+                        />
+                        <label
+                            v-if="form.customer_info_label"
+                            for="customer_info_address_label"
+                            >Customer Address Label</label
+                        >
+                        <Input
+                            v-if="form.customer_info_label"
+                            id="customer_info_address_label"
+                            v-model="form.customer_info_address_label"
+                        />
 
                         <label for="delivery_zone_title"
                             >Delivery Zone Title</label
@@ -304,7 +353,7 @@ import { ref, watch } from 'vue';
 import ImageUploader from '@/components/ImageUploader.vue';
 import ToggleSwitch from '@/components/ToggleSwitch.vue';
 import Button from '@/components/ui/button/Button.vue';
-import { TabsRoot, TabsContent, TabsList, TabsTrigger } from 'reka-ui';
+import { TabsContent, TabsList, TabsRoot, TabsTrigger } from 'reka-ui';
 
 // ✅ Tabs list
 const tabs = [
@@ -345,33 +394,37 @@ const form = useForm({
     instagram_url: setting.instagram_url || '',
     twitter_url: setting.twitter_url || '',
     youtube_url: setting.youtube_url || '',
-    
+
     // ✅ Payments
     enable_cod: setting.cod_method?.status ?? true,
-    
+
     enable_bkash: setting.bkash_method?.status ?? false,
     bkash_account_number: setting.bkash_method?.account_number || '',
     bkash_qr_code: setting.bkash_method?.qr_code || '',
-    
+
     enable_nagad: setting.nagad_method?.status ?? false,
     nagad_account_number: setting.nagad_method?.account_number || '',
     nagad_qr_code: setting.nagad_method?.qr_code || '',
-    
+
     enable_rocket: setting.rocket_method?.status ?? false,
     rocket_account_number: setting.rocket_method?.account_number || '',
     rocket_qr_code: setting.rocket_method?.qr_code || '',
-    
+
     meta_title: setting.meta_title || '',
     meta_description: setting.meta_description || '',
     products_title: setting.products_title || 'Products',
     customer_info_title: setting.customer_info_title || 'Customer Information',
+    customer_info_label: setting.customer_info_label || false,
+    customer_info_name_label: setting.customer_info_name_label || 'Enter Name',
+    customer_info_phone_label: setting.customer_info_phone_label || 'Enter Phone',
+    customer_info_email_label: setting.customer_info_email_label || 'Enter Email',
+    customer_info_address_label: setting.customer_info_address_label || 'Enter Address',
     delivery_zone_title: setting.delivery_zone_title || 'Delivery Zone',
     additional_note_title: setting.additional_note_title || 'Additional Notes',
     order_summary_title: setting.order_summary_title || 'Order Summary',
     payment_title: setting.payment_title || 'Payment Method',
     submit_button: setting.submit_button || 'Place Order',
 });
-
 
 function submit() {
     router.post('/store-settings/update', form);

@@ -1,11 +1,11 @@
 <template>
   <div class="mt-4">
-    <h2 class="text-xl font-bold mb-2"> {{ title }} </h2>
+    <h2 class="text-xl font-bold mb-2">{{ title }}</h2>
 
     <!-- Payment options -->
     <div class="flex flex-wrap gap-3">
       <label
-        v-for="method in paymentMethods"
+        v-for="method in activeMethods"
         :key="method.id"
         class="cursor-pointer border rounded-lg px-4 py-2 transition-all duration-150"
         :class="{
@@ -19,30 +19,28 @@
           v-model="form.payment_method_id"
           class="hidden"
         />
-        <div class="text-center font-semibold">
-          {{ method.name }}
+        <div class="flex flex-col items-center">
+          <div class="text-center font-semibold">
+            {{ method.name }}
+          </div>
         </div>
       </label>
     </div>
 
     <!-- Conditional Section (non-COD methods) -->
     <div
-      v-if="selectedMethod && selectedMethod.name.toLowerCase() !== 'cash on delivery'"
+      v-if="selectedMethod && selectedMethod.code !== 'COD'"
       class="mt-4 p-4 border rounded-lg bg-gray-50"
     >
-      <h3 class="text-lg font-semibold mb-2">
-        Pay with {{ selectedMethod.name }}
-      </h3>
-
-      <!-- Example QR Image -->
+      <!-- QR Image -->
       <div class="flex flex-col items-center mb-4">
         <img
-          src="https://placehold.co/600x400"
+          :src="selectedMethod.qr_code"
           alt="QR Code"
           class="w-40 h-40 object-contain mb-2"
         />
         <p class="text-sm text-gray-600">
-          Scan this QR to pay using {{ selectedMethod.name }}
+          Scan this QR to pay using {{ selectedMethod.name }} or Send to {{ selectedMethod.account_number }}
         </p>
       </div>
 
@@ -62,7 +60,7 @@
           <label class="block text-sm font-medium mb-1">Mobile Number</label>
           <input
             type="text"
-            v-model="form.payment_mobile"
+            v-model="form.transaction_mobile_number"
             placeholder="Enter your payment number"
             class="w-full border rounded p-2"
           />
@@ -71,7 +69,6 @@
     </div>
   </div>
 </template>
-
 <script setup lang="ts">
 import { computed, defineProps } from 'vue';
 
@@ -80,20 +77,25 @@ const props = defineProps<{
   form: {
     payment_method_id: number | null;
     transaction_id?: string;
-    payment_mobile?: string;
+    transaction_mobile_number?: string;
   };
-  paymentMethods: Array<{ id: number; name: string }>;
+  paymentMethods: Array<{
+    id: number;
+    name: string;
+    code: string;
+    provider?: string;
+    qr_code?: string;
+    status: boolean | number;
+  }>;
 }>();
+
+// Show only active (enabled) payment methods
+const activeMethods = computed(() =>
+  props.paymentMethods.filter((m) => m.status === true || m.status === 1)
+);
 
 // Find currently selected method
 const selectedMethod = computed(() =>
   props.paymentMethods.find((m) => m.id === props.form.payment_method_id)
 );
 </script>
-
-<style scoped>
-label {
-  min-width: 120px;
-  text-align: center;
-}
-</style>

@@ -47,8 +47,14 @@ return new class extends Migration
             // Section Titles
             $table->string('products_title')->default('Products');
             $table->string('customer_info_title')->default('Customer Information');
+            $table->string('customer_info_label')->default(1);
+            $table->string('customer_info_name_label')->default('Enter Name');
+            $table->string('customer_info_phone_label')->default('Enter Phone');
+            $table->string('customer_info_email_label')->default('Enter Email');
+            $table->string('customer_info_address_label')->default('Enter Address');
             $table->string('delivery_zone_title')->default('Delivery Zone');
             $table->string('additional_note_title')->default('Additional Notes');
+            $table->string('additional_note_title_status')->default('Additional Notes');
             $table->string('order_summary_title')->default('Order Summary');
             $table->string('payment_title')->default('Payment Method');
             $table->string('submit_button')->default('Place Order');

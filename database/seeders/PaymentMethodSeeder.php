@@ -11,7 +11,7 @@ class PaymentMethodSeeder extends Seeder
     {
         // Cash on Delivery
         PaymentMethod::create([
-            'name' => 'Cash on Delivery',
+            'name' => 'ক্যাশ অন ডেলিভারি',
             'code' => 'COD',
             'type' => 'cod',
             'status' => true,
@@ -19,7 +19,7 @@ class PaymentMethodSeeder extends Seeder
 
         // Mobile Banking: Bkash
         PaymentMethod::create([
-            'name' => 'Bkash',
+            'name' => 'বিকাশ',
             'code' => 'BKASH',
             'type' => 'mobile',
             'provider' => 'Bkash',
@@ -30,7 +30,7 @@ class PaymentMethodSeeder extends Seeder
 
         // Mobile Banking: Nagad
         PaymentMethod::create([
-            'name' => 'Nagad',
+            'name' => 'নগদ',
             'code' => 'NAGAD',
             'type' => 'mobile',
             'provider' => 'Nagad',
@@ -41,7 +41,7 @@ class PaymentMethodSeeder extends Seeder
 
         // Mobile Banking: Nagad
         PaymentMethod::create([
-            'name' => 'Rocket',
+            'name' => 'রকেট',
             'code' => 'ROCKET',
             'type' => 'mobile',
             'provider' => 'Rocket',

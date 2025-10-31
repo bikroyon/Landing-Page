@@ -14,15 +14,23 @@ class Order extends Model
         'user_id',
         'delivery_zone_id',
         'payment_method_id',
+
         'customer_name',
         'customer_phone',
         'customer_email',
         'customer_address',
+
+        'additional_note',
+
         'transaction_method',
         'transaction_id',
-        'transaction_number',
+        'transaction_mobile_number',
+
+        'delivery_fee',
         'subtotal',
+        'total_discount',
         'total_amount',
+
         'status',
         'note',
     ];
@@ -49,9 +57,9 @@ class Order extends Model
         return $this->hasMany(OrderItem::class);
     }
     public function reviews()
-{
-    return $this->hasMany(Review::class);
-}
+    {
+        return $this->hasMany(Review::class);
+    }
 
 
     // Helper to calculate total from items
@@ -64,19 +72,10 @@ class Order extends Model
     public function calculateTotal(): float
     {
         $subtotal = $this->calculateSubtotal();
+
+        // Delivery fee based on delivery zone
         $delivery_fee = $this->deliveryZone?->effectiveFee($subtotal) ?? 0;
-        $discount = 0;
 
-        if ($this->offer && $this->offer->isActive()) {
-            $discount = $this->offer->discount_type === 'fixed'
-                ? $this->offer->discount_value
-                : ($subtotal * $this->offer->discount_value / 100);
-
-            if ($this->offer->max_discount) {
-                $discount = min($discount, $this->offer->max_discount);
-            }
-        }
-
-        return max(0, $subtotal + $delivery_fee - $discount);
+        return max(0, $subtotal + $delivery_fee);
     }
 }

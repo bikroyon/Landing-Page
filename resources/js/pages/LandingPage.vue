@@ -7,7 +7,6 @@
                     {{ store_settings.products_title }}
                 </h2>
             </div>
-
             <form @submit.prevent="submitOrder" class="space-y-4">
                 <!-- Select Products -->
                 <SelectProducts
@@ -20,6 +19,17 @@
                         <!-- Customer Info -->
                         <CustomerInfo
                             :title="store_settings.customer_info_title"
+                            :label="store_settings.customer_info_label"
+                            :nameLabel="store_settings.customer_info_name_label"
+                            :emailLabel="
+                                store_settings.customer_info_email_label
+                            "
+                            :phoneLabel="
+                                store_settings.customer_info_phone_label
+                            "
+                            :addressLabel="
+                                store_settings.customer_info_address_label
+                            "
                             :form="form"
                             :readonly="!!user"
                         />
@@ -36,7 +46,11 @@
                             <label for="additional_note">
                                 {{ store_settings.additional_note_title }}
                             </label>
-                            <textarea name="additional_note" id=""></textarea>
+                            <textarea
+                                name="additional_note"
+                                v-model="form.additional_note"
+                                id=""
+                            ></textarea>
                         </div>
                     </div>
                     <div class="w-5/12">
@@ -83,7 +97,7 @@ import LandingPageDesign from '@/components/LandingPage/Design.vue';
 import LandingPageLayout from '@/layouts/LandingPageLayout.vue';
 import type { DeliveryZone, PaymentMethod, Product, Setting } from '@/types';
 import { useForm, usePage } from '@inertiajs/vue3';
-import { computed, ref, watch } from 'vue';
+import { computed, ref } from 'vue';
 
 const page = usePage();
 const settings = page.props.settings;
@@ -106,7 +120,6 @@ const store_settings = computed(() => props.settings || []);
 const products = computed(() => props.products || []);
 const deliveryZones = computed(() => props.deliveryZones || []);
 const paymentMethods = computed(() => props.paymentMethods || []);
-const offers = computed(() => props.offers || []);
 
 const form = useForm({
     customer_name: user?.name || '',
@@ -116,7 +129,9 @@ const form = useForm({
     items: [] as { product_id: number; quantity: number }[],
     delivery_zone_id: null as number | null,
     payment_method_id: null as number | null,
-    coupon_code: '',
+    additional_note: '',
+    transaction_id: '',
+    transaction_mobile_number: '',
 });
 
 const discount = ref(0);
@@ -131,32 +146,7 @@ const subtotal = computed(() =>
     }, 0),
 );
 
-const deliveryFee = computed(() => {
-    const zone = deliveryZones.value.find(
-        (z) => z.id === form.delivery_zone_id,
-    );
-    return zone ? zone.fee : 0;
-});
-
 const hasSelectedItems = computed(() => form.items.length > 0);
-
-// Watch coupon changes
-watch(
-    () => form.coupon_code,
-    (code) => {
-        const offer = offers.value.find((o) => o.code === code);
-        if (offer) {
-            discount.value =
-                offer.discount_type === 'fixed'
-                    ? offer.discount_value
-                    : (subtotal.value * offer.discount_value) / 100;
-            if (offer.max_discount)
-                discount.value = Math.min(discount.value, offer.max_discount);
-        } else {
-            discount.value = 0;
-        }
-    },
-);
 
 // Submit order
 function submitOrder() {
@@ -166,13 +156,16 @@ function submitOrder() {
     }
 
     form.post('/order', {
+        onSuccess: () => {
+            alert('Order placed successfully!');
+            form.reset();
+        },
         onError: (errors) => {
+            alert('Failed to place order. Please check the form for errors.');
             console.error(errors);
         },
-        onSuccess: (page) => {
-            // Optionally redirect to thank you page
-            console.log('Order placed successfully');
-        },
     });
+
+    console.log('Order Data:', form);
 }
 </script>

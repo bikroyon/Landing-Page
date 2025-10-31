@@ -30,6 +30,7 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/reviews/{review}/toggle-publish', [ReviewController::class, 'togglePublish'])->name('admin.reviews.toggle-publish');
     Route::delete('/reviews/{review}', [ReviewController::class, 'destroy'])->name('admin.reviews.destroy');
     Route::get('/my-reviews', [ReviewController::class, 'myReviews'])->name('reviews.my');
+    
     // Customer review routes
     Route::post('/reviews/{product}', [ReviewController::class, 'store'])->name('reviews.store');
     Route::post('/reviews/{review}/update', [ReviewController::class, 'update'])->name('reviews.update');
