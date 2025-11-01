@@ -5,6 +5,7 @@
         <meta name="description" :content="settings.meta_description || ''" />
     </Head>
     <div>
+        <ToastContainer/>
         <LandingPageHeader/>
         <slot />
         <LandingPageFooter/>
@@ -13,6 +14,7 @@
 <script setup lang="ts">
 import LandingPageFooter from '@/components/LandingPage/Footer.vue';
 import LandingPageHeader from '@/components/LandingPage/Header.vue';
+import ToastContainer from '@/components/ToastContainer.vue';
 import { Head, usePage } from '@inertiajs/vue3';
 
 
