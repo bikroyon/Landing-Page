@@ -26,7 +26,7 @@ export function useToast() {
     // Auto-remove after 3s
     setTimeout(() => {
       toasts.value = toasts.value.filter((t) => t.id !== id)
-    }, 3000)
+    }, 6000)
   }
 
   return { toasts, showToast }

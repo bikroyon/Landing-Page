@@ -12,6 +12,7 @@ class Order extends Model
 
     protected $fillable = [
         'user_id',
+        'order_number',
         'delivery_zone_id',
         'payment_method_id',
 
@@ -77,5 +78,13 @@ class Order extends Model
         $delivery_fee = $this->deliveryZone?->effectiveFee($subtotal) ?? 0;
 
         return max(0, $subtotal + $delivery_fee);
+    }
+    public static function generateOrderNumber()
+    {
+        do {
+            $number = rand(100000, 999999);
+        } while (self::where('order_number', $number)->exists());
+
+        return $number;
     }
 }

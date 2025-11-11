@@ -1,5 +1,9 @@
 <script setup>
+import ToggleSwitch from '@/components/ToggleSwitch.vue';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 import AppLayout from '@/layouts/AppLayout.vue';
+import { Icon } from '@iconify/vue';
 import { Head, Link, router } from '@inertiajs/vue3';
 import { ref, watch } from 'vue';
 
@@ -8,9 +12,7 @@ const props = defineProps({
     filters: Object,
 });
 
-const breadcrumbs = [
-    { title: 'Delivery Zones', href: '/delivery-zones' },
-];  
+const breadcrumbs = [{ title: 'Delivery Zones', href: '/delivery-zones' }];
 
 const search = ref(props.filters.search || '');
 
@@ -45,104 +47,121 @@ const deleteZone = (zoneId) => {
         <Head title="Delivery Zones" />
 
         <div class="space-y-6 p-6">
-            <div class="flex items-center justify-between">
-                <h1 class="text-2xl font-bold">Delivery Zones</h1>
-                <Link
-                    href="/delivery-zones/create"
-                    class="rounded bg-blue-600 px-4 py-2 text-white hover:bg-blue-700"
-                >
-                    + Add New
-                </Link>
+            <!-- Header -->
+            <div class="mb-6">
+                <div>
+                    <h1 class="mb-4 text-2xl font-bold">Delivery Zones</h1>
+                </div>
+
+                <div class="flex justify-between">
+                    <form @submit.prevent="" class="flex gap-2">
+                        <Input
+                            v-model="search"
+                            type="text"
+                            placeholder="Search by name, email or phone"
+                            class="w-full rounded border p-2"
+                        />
+                        <Button type="submit"> Search </Button>
+                    </form>
+                    <div class="flex gap-2">
+                        <Button
+                            >Export
+                            <Icon icon="lucide:printer" />
+                        </Button>
+                        <Link href="/">
+                            <Button>
+                                Make an Order
+                                <Icon icon="lucide:plus" />
+                            </Button>
+                        </Link>
+                    </div>
+                </div>
             </div>
 
-            <!-- 🔍 Search -->
-            <input
-                v-model="search"
-                type="text"
-                placeholder="Search by name, region or area..."
-                class="w-full rounded border px-3 py-2 md:w-1/3"
-            />
-
             <!-- 📋 Table -->
-            <div class="overflow-x-auto rounded-lg bg-white shadow">
+            <div class="overflow-x-auto rounded-lg shadow">
                 <table class="min-w-full text-left text-sm">
-                    <thead class="border-b bg-gray-100 text-gray-700">
+                    <thead class="border-b bg-gray-200">
                         <tr>
+                            <th class="p-3">#</th>
                             <th class="p-3">Name</th>
                             <th class="p-3">Region</th>
                             <th class="p-3">Area</th>
-                            <th class="p-3 text-right">Delivery Fee</th>
-                            <th class="p-3 text-right">Free Min Order</th>
-                            <th class="p-3 text-center">Status</th>
-                            <th class="p-3 text-right">Action</th>
+                            <th class="p-3">Delivery Fee</th>
+                            <th class="p-3">Free Min Order</th>
+                            <th class="p-3">Status</th>
+                            <th class="p-3 text-center">Action</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr
                             v-for="zone in props.zones.data"
                             :key="zone.id"
-                            class="border-b hover:bg-gray-50"
+                            class="border-b"
                         >
+                            <td class="p-3">{{ zone.id }}</td>
                             <td class="p-3">{{ zone.name }}</td>
                             <td class="p-3">{{ zone.region || '-' }}</td>
                             <td class="p-3">{{ zone.area || '-' }}</td>
-                            <td class="p-3 text-right">
+                            <td class="p-3">
                                 {{ Number(zone.delivery_fee ?? 0).toFixed(2) }}
                             </td>
-                            <td class="p-3 text-right">
+                            <td class="p-3">
                                 {{ zone.free_delivery_min_order ?? '-' }}
                             </td>
-                            <td class="p-3 text-center">
-                                <button
-                                    @click="toggleStatus(zone.id)"
-                                    class="rounded px-2 py-1 text-xs font-medium"
-                                    :class="
-                                        zone.status
-                                            ? 'bg-green-100 text-green-700 hover:bg-green-200'
-                                            : 'bg-red-100 text-red-700 hover:bg-red-200'
+                            <td class="p-3">
+                                <ToggleSwitch
+                                    :modelValue="zone.status"
+                                    @update:modelValue="
+                                        () => toggleStatus(zone.id)
                                     "
-                                >
-                                    {{ zone.status ? 'Active' : 'Inactive' }}
-                                </button>
+                                    :labal="false"
+                                />
                             </td>
-                            <td class="space-x-3 p-3 text-right">
+                            <td class="space-x-3 p-3 text-center">
                                 <Link
                                     :href="`/delivery-zones/${zone.id}/edit`"
                                     class="text-blue-600 hover:underline"
                                 >
-                                    Edit
+                                    <Button size="xs">
+                                        <Icon icon="lucide:edit-2" />
+                                    </Button>
                                 </Link>
-                                <button
-                                    @click="deleteZone(zone.id)"
-                                    class="text-red-600 hover:underline"
-                                >
-                                    Delete
-                                </button>
+                                <Link @click="deleteZone(zone.id)">
+                                    <Button size="xs" variant="destructive">
+                                        <Icon icon="lucide:trash-2" />
+                                    </Button>
+                                </Link>
                             </td>
                         </tr>
                     </tbody>
                 </table>
             </div>
 
-            <!-- 📄 Pagination -->
-            <div class="mt-4 flex flex-wrap justify-end gap-2">
-                <template v-for="link in props.zones.links" :key="link.label">
-                    <Link
-                        v-if="link.url"
-                        :href="link.url"
-                        v-html="link.label"
-                        class="rounded border px-3 py-1"
-                        :class="{
-                            'bg-blue-600 text-white': link.active,
-                            'text-gray-700 hover:bg-gray-100': !link.active,
-                        }"
-                    />
-                    <span
-                        v-else
-                        v-html="link.label"
-                        class="rounded border px-3 py-1 text-gray-400"
-                    ></span>
-                </template>
+            <!-- Pagination -->
+            <div class="mt-6 flex justify-center">
+                <nav class="flex gap-1">
+                    <template v-for="(link, i) in zones.links" :key="i">
+                        <Button
+                            v-if="link.url"
+                            @click="goTo(link.url)"
+                            v-html="link.label"
+                            :class="[
+                                'rounded border px-3 py-1',
+                                link.active
+                                    ? 'text-white' // Active page
+                                    : 'bg-white text-gray-700 hover:bg-gray-100',
+                            ]"
+                        ></Button>
+
+                        <!-- No URL = disabled (Previous/Next) -->
+                        <span
+                            v-else
+                            v-html="link.label"
+                            class="px-3 py-1 text-gray-400"
+                        ></span>
+                    </template>
+                </nav>
             </div>
         </div>
     </AppLayout>

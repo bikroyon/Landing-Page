@@ -6,28 +6,34 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
+    /**
+     * Run the migrations.
+     */
     public function up(): void
     {
         Schema::create('trackings', function (Blueprint $table) {
             $table->id();
 
-            // Store guest/session info
-            $table->string('session_id')->nullable(); // tie to Laravel session
-            $table->ipAddress('ip')->nullable();      // guest IP
-            $table->string('user_agent')->nullable(); // browser info
+            // Facebook Pixel
+            $table->string('facebook_pixel_id')->nullable();
+            $table->string('facebook_access_token')->nullable();
+            $table->boolean('facebook_test_event')->default(false);
+            $table->string('facebook_test_event_code')->nullable();
 
-            // Store pixel/analytics info
-            $table->string('fb_pixel_id')->nullable();
+            // Google
+            $table->string('google_tag_manager_id')->nullable();
             $table->string('google_analytics_id')->nullable();
 
-            // Optional: store event or page
-            $table->string('event_name')->nullable();
-            $table->json('event_data')->nullable(); // any extra data
+            // Optional Data Layer / extra configs
+            $table->json('data_layer')->nullable();
 
             $table->timestamps();
         });
     }
 
+    /**
+     * Reverse the migrations.
+     */
     public function down(): void
     {
         Schema::dropIfExists('trackings');

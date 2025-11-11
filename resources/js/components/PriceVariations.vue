@@ -15,7 +15,7 @@
             :key="index"
             class="mb-3 relative rounded border p-3 space-y-2"
         >
-            <div class="flex flex-row gap-3">
+            <div class="flex flex-row items-center gap-3">
                 <!-- Inputs -->
                 <div class="flex-1 space-y-2">
                     <div class="flex items-center gap-2">
@@ -52,7 +52,7 @@
                 </div>
 
                 <!-- Image Upload -->
-                <div class="w-[100px]">
+                <div class="w-[90px]">
                     <ImageUploader
                         v-model="variation.image"
                         :existing-url="variation.imagePreview"

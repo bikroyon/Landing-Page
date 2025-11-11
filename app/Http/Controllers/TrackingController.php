@@ -2,51 +2,40 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Models\Tracking;
+use Illuminate\Http\Request;
+use Inertia\Inertia;
 
 class TrackingController extends Controller
 {
-    // List all tracking records
     public function index()
     {
-        $trackings = Tracking::latest()->paginate(15);
-        return response()->json($trackings);
+        $tracking = Tracking::first();
+        return Inertia::render('tracking/Index', [
+            'tracking' => $tracking,
+        ]);
     }
 
-    // Store new tracking record
     public function store(Request $request)
     {
-        $tracking = Tracking::create([
-            'session_id' => $request->session()->getId(),
-            'ip' => $request->ip(),
-            'user_agent' => $request->userAgent(),
-            'fb_pixel_id' => $request->fb_pixel_id,
-            'google_analytics_id' => $request->google_analytics_id,
-            'event_name' => $request->event_name,
-            'event_data' => $request->event_data,
+        $data = $request->validate([
+            'facebook_pixel_id' => 'nullable|string',
+            'facebook_access_token' => 'nullable|string',
+            'facebook_test_event' => 'boolean',
+            'facebook_test_event_code' => 'nullable|string',
+            'google_tag_manager_id' => 'nullable|string',
+            'google_analytics_id' => 'nullable|string',
+            'data_layer' => 'nullable|array',
         ]);
 
-        return response()->json(['success' => true, 'tracking' => $tracking]);
-    }
+        $tracking = Tracking::first();
 
-    // Update an existing tracking record
-    public function update(Request $request, Tracking $tracking)
-    {
-        $tracking->update([
-            'fb_pixel_id' => $request->fb_pixel_id,
-            'google_analytics_id' => $request->google_analytics_id,
-            'event_name' => $request->event_name,
-            'event_data' => $request->event_data,
-        ]);
+        if ($tracking) {
+            $tracking->update($data);
+        } else {
+            Tracking::create($data);
+        }
 
-        return response()->json(['success' => true, 'tracking' => $tracking]);
-    }
-
-    // Delete a tracking record
-    public function destroy(Tracking $tracking)
-    {
-        $tracking->delete();
-        return response()->json(['success' => true]);
+        return redirect()->back()->with('success', 'Tracking settings saved!');
     }
 }

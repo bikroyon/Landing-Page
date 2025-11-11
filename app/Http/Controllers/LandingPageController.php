@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Models\Product;
 use App\Models\Order;
 use App\Models\OrderItem;
@@ -11,6 +12,7 @@ use App\Models\StoreSetting;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Auth;
+use App\Helpers\FacebookCAPI;
 
 class LandingPageController extends Controller
 {
@@ -44,7 +46,7 @@ class LandingPageController extends Controller
         // 1️⃣ Validate Request
         $data = $request->validate([
             'customer_name' => 'required|string|max:255',
-            'customer_phone' => 'required|string|max:50',
+            'customer_phone' => 'required|string|max:50|min:11|max:11',
             'customer_email' => 'nullable|email',
             'customer_address' => 'required|string',
 
@@ -60,7 +62,37 @@ class LandingPageController extends Controller
             'additional_note' => 'nullable|string',
             'transaction_id' => 'nullable|string|max:255',
             'transaction_mobile_number' => 'nullable|string|max:255',
+        ], [
+
+            // ✅ Customer Info Messages
+            'customer_name.required' => 'নাম অবশ্যই দিতে হবে।',
+            'customer_phone.required' => 'মোবাইল নম্বর অবশ্যই দিতে হবে।',
+            'customer_phone.min' => 'মোবাইল নম্বর অবশ্যই ১১ সংখ্যার হতে হবে।',
+            'customer_phone.max' => 'মোবাইল নম্বর অবশ্যই ১১ সংখ্যার হতে হবে।',
+
+            'customer_email.email' => 'সঠিক ই-মেইল দিন (যেমনঃ example@gmail.com)',
+            'customer_address.required' => 'ঠিকানা অবশ্যই দিতে হবে।',
+
+            // ✅ Items Messages
+            'items.required' => 'কমপক্ষে একটি পণ্য সিলেক্ট করুন।',
+            'items.min' => 'কমপক্ষে একটি পণ্য যোগ করতে হবে।',
+            'items.*.product_id.required' => 'পণ্য নির্বাচন করা হয়নি।',
+            'items.*.product_id.exists' => 'সিলেক্ট করা পণ্য পাওয়া যায়নি।',
+            'items.*.quantity.required' => 'পণ্যের পরিমাণ দিতে হবে।',
+            'items.*.quantity.min' => 'কমপক্ষে ১টি পণ্য অর্ডার করতে হবে।',
+
+            // ✅ Delivery / Payment
+            'delivery_zone_id.required' => 'ডেলিভারি এরিয়া নির্বাচন করুন।',
+            'delivery_zone_id.exists' => 'ডেলিভারি এরিয়া সঠিক নয়।',
+            'payment_method_id.required' => 'পেমেন্ট মেথড নির্বাচন করুন।',
+            'payment_method_id.exists' => 'পেমেন্ট মেথড সঠিক নয়।',
+
+            // ✅ Payment Information
+            'transaction_id.max' => 'লেনদেন নম্বর সঠিক নয়।',
+            'transaction_mobile_number.max' => 'লেনদেন করা মোবাইল নম্বর সঠিক নয়।',
         ]);
+        // ✅ Generate unique order number
+        $data['order_number'] = Order::generateOrderNumber();
 
         $user = Auth::user();
 
@@ -87,6 +119,7 @@ class LandingPageController extends Controller
         // 6️⃣ Create Order
         $order = Order::create([
             'user_id' => $user?->id,
+            'order_number' => $data['order_number'],
             'customer_name' => $data['customer_name'],
             'customer_phone' => $data['customer_phone'],
             'customer_email' => $data['customer_email'],
@@ -106,8 +139,7 @@ class LandingPageController extends Controller
 
             'status' => 'pending',
         ]);
-
-        // 7️⃣ Save Order Items
+        // 7 Save Order Items
         foreach ($data['items'] as $item) {
             $product = Product::findOrFail($item['product_id']);
             $variantPrice = $product->variants[$item['variant_index']]['price'] ?? $product->price;
@@ -123,8 +155,42 @@ class LandingPageController extends Controller
                 'subtotal' => $price * $item['quantity'],
             ]);
         }
+        // Generate unique event ID for deduplication
+        $eventId = uniqid();
 
-        return redirect()->route('order.thankyou', $order->id);
+        // Prepare contents array
+        $contents = $order->items->map(function ($item) {
+            return [
+                'id' => $item->product_id,
+                'quantity' => $item->quantity,
+                'item_price' => $item->price,
+            ];
+        })->toArray();
+
+        // Prepare user data (hashed)
+        $userData = [
+            'em' => $order->customer_email ? hash('sha256', $order->customer_email) : null,
+            'ph' => $order->customer_phone ? hash('sha256', $order->customer_phone) : null,
+        ];
+
+        // Send Purchase event
+        FacebookCAPI::sendEvent([
+            'event_name' => 'Purchase',
+            'event_time' => time(),
+            'event_id' => $eventId, // deduplication
+            'user_data' => array_filter($userData),
+            'custom_data' => [
+                'currency' => 'BDT',
+                'value' => $order->total_amount,
+                'content_ids' => $order->items->pluck('product_id')->toArray(),
+                'contents' => $contents,
+                'num_items' => $order->items->count(),
+            ],
+            'action_source' => 'website',
+        ]);
+
+
+        return redirect()->route('order.thankyou', $order->order_number);
     }
 
 
@@ -133,17 +199,53 @@ class LandingPageController extends Controller
     /**
      * Show thank you page after order
      */
-    public function thankYou($orderId)
+    public function thankYou($order_number)
     {
-        $order = Order::with('items.product')->findOrFail($orderId);
+        $order = Order::with(['items.product', 'paymentMethod', 'deliveryZone'])
+            ->where('order_number', $order_number)
+            ->firstOrFail();
 
-        $userExists = \App\Http\Controllers\Auth\RegisteredUserController::customerExists(
+        $userExists = RegisteredUserController::customerExists(
             $order->customer_email ?? null,
             $order->customer_phone
         );
 
+        // Map items to include variant info
+        $items = $order->items->map(function ($item) {
+            return [
+                'id' => $item->id,
+                'quantity' => $item->quantity,
+                'price' => $item->price,
+                'subtotal' => $item->subtotal,
+                'variant_index' => $item->variant_index,
+                'extra_price' => $item->extra_price,
+                'product' => [
+                    'id' => $item->product->id,
+                    'name' => $item->product->name,
+                    'price' => $item->product->price,
+                    'image' => $item->product->image,
+                    'variations' => $item->product->variations,
+                ],
+            ];
+        });
+
         return Inertia::render('ThankYou', [
-            'order' => $order,
+            'order' => [
+                'id' => $order->id,
+                'order_number' => $order->order_number,
+                'customer_name' => $order->customer_name,
+                'customer_email' => $order->customer_email,
+                'customer_phone' => $order->customer_phone,
+                'customer_address' => $order->customer_address,
+                'payment_method' => $order->paymentMethod?->name ?? 'N/A',
+                'delivery_zone' => $order->deliveryZone?->name ?? 'N/A',
+                'delivery_fee' => $order->delivery_fee,
+                'subtotal' => $order->subtotal,
+                'total_discount' => $order->total_discount,
+                'total_amount' => $order->total_amount,
+                'items' => $items,
+                'note' => $order->note,
+            ],
             'userExists' => $userExists,
         ]);
     }

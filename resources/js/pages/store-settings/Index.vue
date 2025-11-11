@@ -339,6 +339,104 @@
                         />
                     </div>
                 </TabsContent>
+
+                <!--Email & SMS-->
+                <TabsContent value="Email & SMS">
+                    <div class="mt-6 grid grid-cols-1 gap-4 md:grid-cols-2">
+                        <!-- SMTP Email Settings -->
+                        <h2
+                            class="col-span-2 text-lg font-semibold text-gray-800"
+                        >
+                            SMTP Email Settings
+                        </h2>
+
+                        <label for="mail_driver">Mail Driver</label>
+                        <Input
+                            id="mail_driver"
+                            v-model="form.mail_driver"
+                            placeholder="smtp"
+                        />
+
+                        <label for="mail_host">SMTP Host</label>
+                        <Input
+                            id="mail_host"
+                            v-model="form.mail_host"
+                            placeholder="smtp.gmail.com"
+                        />
+
+                        <label for="mail_port">SMTP Port</label>
+                        <Input
+                            id="mail_port"
+                            v-model="form.mail_port"
+                            type="number"
+                            placeholder="587"
+                        />
+
+                        <label for="mail_username">SMTP Username</label>
+                        <Input
+                            id="mail_username"
+                            v-model="form.mail_username"
+                        />
+
+                        <label for="mail_password">SMTP Password</label>
+                        <Input
+                            id="mail_password"
+                            v-model="form.mail_password"
+                            type="password"
+                        />
+
+                        <label for="mail_encryption">Encryption</label>
+                        <Input
+                            id="mail_encryption"
+                            v-model="form.mail_encryption"
+                            placeholder="tls / ssl"
+                        />
+
+                        <label for="mail_from_address">From Email</label>
+                        <Input
+                            id="mail_from_address"
+                            v-model="form.mail_from_address"
+                        />
+
+                        <label for="mail_from_name">From Name</label>
+                        <Input
+                            id="mail_from_name"
+                            v-model="form.mail_from_name"
+                        />
+
+                        <!-- SMS Settings -->
+                        <h2
+                            class="col-span-2 mt-6 text-lg font-semibold text-gray-800"
+                        >
+                            SMS Gateway Settings
+                        </h2>
+
+                        <label for="sms_api_url">SMS API URL</label>
+                        <Input
+                            id="sms_api_url"
+                            v-model="form.sms_api_url"
+                            placeholder="https://api.smsprovider.com/send"
+                        />
+
+                        <label for="sms_api_key">API Key</label>
+                        <Input id="sms_api_key" v-model="form.sms_api_key" />
+
+                        <label for="sms_sender_id">Sender ID</label>
+                        <Input
+                            id="sms_sender_id"
+                            v-model="form.sms_sender_id"
+                            placeholder="Bikroyon"
+                        />
+                    </div>
+                </TabsContent>
+
+                <!--Tackings-->
+                <TabsContent value="Trackings">
+                    <label>Facebook Pixel ID</label>
+                    <Input v-model="form.fb_pixel_id" />
+                    <label>Facebook Pixel Token</label>
+                    <Input v-model="form.fb_pixel_access_token" />
+                </TabsContent>
             </TabsRoot>
         </div>
     </AppLayout>
@@ -361,6 +459,8 @@ const tabs = [
     'Contact Info',
     'Business Settings',
     'Section Titles',
+    'Email & SMS',
+    'Trackings',
 ];
 
 // ✅ Load last active tab from localStorage or fallback
@@ -416,14 +516,35 @@ const form = useForm({
     customer_info_title: setting.customer_info_title || 'Customer Information',
     customer_info_label: setting.customer_info_label || false,
     customer_info_name_label: setting.customer_info_name_label || 'Enter Name',
-    customer_info_phone_label: setting.customer_info_phone_label || 'Enter Phone',
-    customer_info_email_label: setting.customer_info_email_label || 'Enter Email',
-    customer_info_address_label: setting.customer_info_address_label || 'Enter Address',
+    customer_info_phone_label:
+        setting.customer_info_phone_label || 'Enter Phone',
+    customer_info_email_label:
+        setting.customer_info_email_label || 'Enter Email',
+    customer_info_address_label:
+        setting.customer_info_address_label || 'Enter Address',
     delivery_zone_title: setting.delivery_zone_title || 'Delivery Zone',
     additional_note_title: setting.additional_note_title || 'Additional Notes',
     order_summary_title: setting.order_summary_title || 'Order Summary',
     payment_title: setting.payment_title || 'Payment Method',
     submit_button: setting.submit_button || 'Place Order',
+
+    //Tracking
+    fb_pixel_id: setting.fb_pixel_id || '',
+    fb_pixel_access_token: setting.fb_pixel_access_token || '',
+
+    //email & sms
+    mail_driver: setting.mail_driver || 'smtp',
+    mail_host: setting.mail_host || '',
+    mail_port: setting.mail_port || 587,
+    mail_username: setting.mail_username || '',
+    mail_password: setting.mail_password || '',
+    mail_encryption: setting.mail_encryption || 'tls',
+    mail_from_address: setting.mail_from_address || '',
+    mail_from_name: setting.mail_from_name || '',
+
+    sms_api_url: setting.sms_api_url || '',
+    sms_api_key: setting.sms_api_key || '',
+    sms_sender_id: setting.sms_sender_id || '',
 });
 
 function submit() {

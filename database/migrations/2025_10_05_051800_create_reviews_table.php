@@ -19,7 +19,7 @@ return new class extends Migration
             // Review content
             $table->tinyInteger('rating')->unsigned()->comment('1 to 5 stars');
             $table->text('comment')->nullable();
-$table->boolean('is_published')->default(false);
+            $table->boolean('is_published')->default(false);
             $table->timestamps();
         });
     }

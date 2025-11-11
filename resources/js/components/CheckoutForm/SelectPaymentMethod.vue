@@ -40,7 +40,8 @@
           class="w-40 h-40 object-contain mb-2"
         />
         <p class="text-sm text-gray-600">
-          Scan this QR to pay using {{ selectedMethod.name }} or Send to {{ selectedMethod.account_number }}
+          Scan this QR to pay using {{ selectedMethod.name }}
+          or Send to {{ selectedMethod.account_number }}
         </p>
       </div>
 
@@ -69,8 +70,9 @@
     </div>
   </div>
 </template>
+
 <script setup lang="ts">
-import { computed, defineProps } from 'vue';
+import { computed, defineProps, watch } from 'vue';
 
 const props = defineProps<{
   title?: string;
@@ -85,17 +87,32 @@ const props = defineProps<{
     code: string;
     provider?: string;
     qr_code?: string;
+    account_number?: string;
     status: boolean | number;
   }>;
 }>();
 
-// Show only active (enabled) payment methods
+// ✅ Active methods only
 const activeMethods = computed(() =>
   props.paymentMethods.filter((m) => m.status === true || m.status === 1)
 );
 
-// Find currently selected method
+// ✅ Currently selected method
 const selectedMethod = computed(() =>
   props.paymentMethods.find((m) => m.id === props.form.payment_method_id)
+);
+
+// ✅ Auto-select COD by default
+watch(
+  () => props.paymentMethods,
+  (methods) => {
+    if (!props.form.payment_method_id) {
+      const cod = methods.find((m) => m.code === 'COD');
+      if (cod) {
+        props.form.payment_method_id = cod.id; // ✅ Default selection
+      }
+    }
+  },
+  { immediate: true }
 );
 </script>

@@ -31,6 +31,7 @@
                                 store_settings.customer_info_address_label
                             "
                             :form="form"
+                            :errors="form.errors"
                             :readonly="!!user"
                         />
 
@@ -39,6 +40,7 @@
                             :title="store_settings.delivery_zone_title"
                             :zones="deliveryZones"
                             :form="form"
+                            :errors="form.errors"
                             :subtotal="subtotal"
                         />
 
@@ -94,10 +96,25 @@ import SelectDeliveryZone from '@/components/CheckoutForm/SelectDeliveryZone.vue
 import SelectPaymentMethod from '@/components/CheckoutForm/SelectPaymentMethod.vue';
 import SelectProducts from '@/components/CheckoutForm/SelectProducts.vue';
 import LandingPageDesign from '@/components/LandingPage/Design.vue';
+import { useToast } from '@/Composables/useToast';
+import { fbPixel } from '@/helpers/fbPixel';
 import LandingPageLayout from '@/layouts/LandingPageLayout.vue';
 import type { DeliveryZone, PaymentMethod, Product, Setting } from '@/types';
 import { useForm, usePage } from '@inertiajs/vue3';
-import { computed, ref } from 'vue';
+import { computed, onMounted, ref } from 'vue';
+const { showToast } = useToast();
+
+onMounted(() => {
+    if (form.items.length) {
+        fbPixel.track('InitiateCheckout', {
+            content_ids: form.items.map((i) => i.product_id),
+            content_type: 'product',
+            value: subtotal.value,
+            currency: 'BDT',
+            num_items: form.items.length,
+        });
+    }
+});
 
 const page = usePage();
 const settings = page.props.settings;
@@ -151,21 +168,49 @@ const hasSelectedItems = computed(() => form.items.length > 0);
 // Submit order
 function submitOrder() {
     if (!hasSelectedItems.value) {
-        alert('Select at least one product.');
+        showToast(
+            'দুঃক্ষিত!',
+            'অর্ডার করতে সর্বনিম্ন ১টি প্রোডাক্ট সিলেক্ট করতে হবে।',
+            'error',
+        );
         return;
     }
 
-    form.post('/order', {
-        onSuccess: () => {
-            alert('Order placed successfully!');
-            form.reset();
-        },
-        onError: (errors) => {
-            alert('Failed to place order. Please check the form for errors.');
-            console.error(errors);
-        },
+    // Fire InitiateCheckout
+    fbPixel.track('InitiateCheckout', {
+        value: subtotal.value,
+        currency: 'BDT',
+        content_ids: form.items.map((i) => i.product_id),
+        content_type: 'product',
+        num_items: form.items.length,
     });
 
-    console.log('Order Data:', form);
+    // Inside your submitOrder() function
+    fbPixel.track('AddToCart', {
+        content_ids: form.items.map((i) => i.product_id),
+        content_type: 'product',
+        value: subtotal.value,
+        currency: 'BDT',
+        num_items: form.items.length,
+    });
+
+    // Submit the order
+    form.post('/order', {
+        onSuccess: () => {
+            showToast(
+                'ধন্যবাদ!',
+                'আপনার অর্ডারটি সফলভাবে গ্রহন করা হয়েছে।',
+                'success',
+            );
+            form.reset();
+        },
+        onError: () => {
+            showToast(
+                'দুঃক্ষিত!',
+                'কোথাও কিছু ভুল হয়েছে, দয়া করে চেক করুন।',
+                'error',
+            );
+        },
+    });
 }
 </script>

@@ -10,6 +10,7 @@ return new class extends Migration {
         Schema::create('orders', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->nullable()->constrained()->cascadeOnDelete();
+            $table->string('order_number', 6)->unique();
             $table->foreignId('delivery_zone_id')->nullable()->constrained()->cascadeOnDelete();
             $table->foreignId('payment_method_id')->nullable()->constrained()->cascadeOnDelete();
 

@@ -33,60 +33,95 @@
             </div>
 
             <!-- Products Table -->
-            <div class="overflow-x-auto">
+            <div class="overflow-x-auto rounded shadow">
                 <table class="min-w-full rounded-lg border">
                     <thead class="bg-gray-100">
                         <tr>
                             <th class="p-2 text-center">ID</th>
                             <th class="p-2 text-left">Product</th>
                             <th class="p-2 text-left">Price</th>
+                            <th class="p-2 text-left">Variants</th>
                             <th class="p-2 text-left">Status</th>
                             <th class="p-2 text-center">Action</th>
                         </tr>
                     </thead>
+
                     <tbody>
                         <tr
                             v-for="product in products.data"
                             :key="product.id"
                             class="border-t transition hover:bg-gray-50"
                         >
+                            <!-- 1. ID -->
                             <td class="p-2 text-center text-sm">
                                 {{ product.id }}
                             </td>
-                            <td class="flex items-center gap-2 p-2">
-                                <img
-                                    :src="
-                                        product.image
-                                            ? `${product.image}`
-                                            : 'https://placehold.co/600x400'
-                                    "
-                                    alt="product"
-                                    class="h-10 w-10 rounded object-cover"
-                                />
 
-                                <div class="flex flex-col">
-                                    <span
-                                        class="w-40 truncate font-medium sm:w-60"
-                                    >
-                                        {{ product.name || 'Product Name' }}
-                                    </span>
-                                    <span
-                                        class="w-40 truncate text-xs text-gray-500 sm:w-60"
-                                    >
-                                        {{
-                                            product.description ||
-                                            'Product description...'
-                                        }}
-                                    </span>
+                            <td class="p-2 align-middle">
+                                <div class="flex items-center gap-2">
+                                    <img
+                                        :src="
+                                            product.image ??
+                                            'https://placehold.co/600x400'
+                                        "
+                                        class="h-10 w-10 rounded object-cover"
+                                    />
+
+                                    <div class="flex flex-col">
+                                        <span
+                                            class="w-40 truncate font-medium sm:w-60"
+                                        >
+                                            {{ product.name }}
+                                        </span>
+                                        <span
+                                            class="w-40 truncate text-xs text-gray-500 sm:w-60"
+                                        >
+                                            {{ product.description }}
+                                        </span>
+                                    </div>
                                 </div>
                             </td>
+
+                            <!-- 3. Price -->
                             <td class="p-2 text-sm">
                                 {{ Number(product.price).toFixed(2) }}৳
                             </td>
 
-                            <td class="p-2 text-sm">  {{ product.status ? 'Active' : 'Inactive' }}</td>
+                            <!-- 4. Variants -->
+                            <td class="p-2 text-xs w-60">
+                                <div v-if="product.variations?.length">
+                                    <div
+                                        v-for="(v, i) in product.variations"
+                                        :key="i"
+                                        class="flex justify-between border-b py-1 last:border-b-0"
+                                    >
+                                        <span>{{ v.name }}</span>
+                                        <span class="text-xs text-gray-600"
+                                            >SKU: {{ v.sku }}</span
+                                        >
+                                        <span
+                                            :class="
+                                                v.stock > 0
+                                                    ? 'text-xs text-green-600'
+                                                    : 'text-xs text-red-600'
+                                            "
+                                        >
+                                            {{ v.stock }}
+                                        </span>
+                                    </div>
+                                </div>
+                                <div v-else class="text-xs text-gray-400">
+                                    No Variants
+                                </div>
+                            </td>
+
+                            <!-- 5. Status -->
+                            <td class="p-2 text-sm">
+                                {{ product.status ? 'Active' : 'Inactive' }}
+                            </td>
+
+                            <!-- 6. Actions -->
                             <td class="p-2 text-center">
-                                <!-- Edit -->
                                 <Link :href="`/products/${product.id}/edit`">
                                     <Button
                                         size="sm"
@@ -97,7 +132,6 @@
                                     </Button>
                                 </Link>
 
-                                <!-- Delete -->
                                 <Button
                                     size="sm"
                                     class="ml-2"
@@ -106,7 +140,7 @@
                                 >
                                     <Icon name="Trash2" />
                                 </Button>
-                                <!-- View -->
+
                                 <Button size="sm" class="ml-2">
                                     <Icon name="Eye" />
                                 </Button>

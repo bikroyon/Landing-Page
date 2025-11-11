@@ -82,6 +82,22 @@ class StoreSettingController extends Controller
             'order_summary_title' => 'nullable|string|max:255',
             'payment_title' => 'nullable|string|max:255',
             'submit_button' => 'nullable|string|max:255',
+            'fb_pixel_id' => 'nullable|string|max:255',
+            'fb_pixel_access_token' => 'nullable|string|max:255',
+            // Email / SMTP
+            'mail_driver' => 'required|string|in:smtp,sendmail,mailgun',
+            'mail_host' => 'required|string|max:255',
+            'mail_port' => 'required|integer',
+            'mail_username' => 'nullable|string|max:255',
+            'mail_password' => 'nullable|string|max:255',
+            'mail_encryption' => 'nullable|string|in:tls,ssl',
+            'mail_from_address' => 'required|email|max:255',
+            'mail_from_name' => 'nullable|string|max:255',
+
+            // SMS
+            'sms_api_url' => 'nullable|url|max:255',
+            'sms_api_key' => 'nullable|string|max:255',
+            'sms_sender_id' => 'nullable|string|max:50',
         ]);
 
         $setting = StoreSetting::first();
@@ -151,39 +167,37 @@ class StoreSettingController extends Controller
             ],
         ];
 
-foreach ($payments as $p) {
-    $payment = PaymentMethod::firstOrNew(['code' => $p['code']]);
-    $payment->name = $p['name'];
-    $payment->type = $p['type'] ?? 'mobile';
-    $payment->provider = $p['provider'];
-    $payment->account_number = $p['account_number'];
-    $payment->status = $p['status'];
+        foreach ($payments as $p) {
+            $payment = PaymentMethod::firstOrNew(['code' => $p['code']]);
+            $payment->name = $p['name'];
+            $payment->type = $p['type'] ?? 'mobile';
+            $payment->provider = $p['provider'];
+            $payment->account_number = $p['account_number'];
+            $payment->status = $p['status'];
 
-    $fileKey1 = strtolower($p['code']) . '_qr_code';       // Vue field
-    $fileKey2 = strtolower($p['code']) . '_qr_code_file';  // alt name
+            $fileKey1 = strtolower($p['code']) . '_qr_code';       // Vue field
+            $fileKey2 = strtolower($p['code']) . '_qr_code_file';  // alt name
 
-    // ✅ If an image file is uploaded (from v-model ImageUploader)
-    if ($request->hasFile($fileKey1)) {
-        if ($payment->qr_code && file_exists(public_path($payment->qr_code))) {
-            @unlink(public_path($payment->qr_code));
+            // ✅ If an image file is uploaded (from v-model ImageUploader)
+            if ($request->hasFile($fileKey1)) {
+                if ($payment->qr_code && file_exists(public_path($payment->qr_code))) {
+                    @unlink(public_path($payment->qr_code));
+                }
+                $path = $request->file($fileKey1)->store('payment_qr', 'public');
+                $payment->qr_code = 'storage/' . $path;
+            } elseif ($request->hasFile($fileKey2)) {
+                if ($payment->qr_code && file_exists(public_path($payment->qr_code))) {
+                    @unlink(public_path($payment->qr_code));
+                }
+                $path = $request->file($fileKey2)->store('payment_qr', 'public');
+                $payment->qr_code = 'storage/' . $path;
+            } elseif ($request->input($fileKey1) && !str_contains($request->input($fileKey1), 'blob')) {
+                // If frontend sends an existing URL instead of a new file
+                $payment->qr_code = $request->input($fileKey1);
+            }
+
+            $payment->save();
         }
-        $path = $request->file($fileKey1)->store('payment_qr', 'public');
-        $payment->qr_code = 'storage/' . $path;
-    }
-    elseif ($request->hasFile($fileKey2)) {
-        if ($payment->qr_code && file_exists(public_path($payment->qr_code))) {
-            @unlink(public_path($payment->qr_code));
-        }
-        $path = $request->file($fileKey2)->store('payment_qr', 'public');
-        $payment->qr_code = 'storage/' . $path;
-    }
-    elseif ($request->input($fileKey1) && !str_contains($request->input($fileKey1), 'blob')) {
-        // If frontend sends an existing URL instead of a new file
-        $payment->qr_code = $request->input($fileKey1);
-    }
-
-    $payment->save();
-}
 
 
         return redirect()->route('settings.index')->with('success', 'Settings updated successfully!');

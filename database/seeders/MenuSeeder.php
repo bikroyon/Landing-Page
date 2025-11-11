@@ -24,24 +24,31 @@ class MenuSeeder extends Seeder
             ['id' => 8, 'parent_id' => null, 'name' => 'Reports', 'slug' => 'reports', 'href' => '#', 'icon' => 'fluent:tag-multiple-16-filled', 'sequance' => 8, 'status' => 1],
             ['id' => 9, 'parent_id' => null, 'name' => 'Fraud Checker', 'slug' => 'fraud-checker', 'href' => '/fraud-checker', 'icon' => 'ri:database-fill', 'sequance' => 9, 'status' => 1],
             ['id' => 10, 'parent_id' => null, 'name' => 'Store Settings', 'slug' => 'store-settings', 'href' => '/store-settings', 'icon' => 'jam:computer-f', 'sequance' => 10, 'status' => 1],
-            ['id' => 11, 'parent_id' => null, 'name' => 'Support', 'slug' => 'support', 'href' => '/support', 'icon' => 'streamline-ultimate:shopping-cart-full-bold', 'sequance' => 11, 'status' => 1],
-            ['id' => 12, 'parent_id' => null, 'name' => 'OthersPages', 'slug' => 'page', 'href' => '/pages/about-us', 'icon' => 'ic:baseline-library-books', 'sequance' => 12, 'status' => 1],
+            ['id' => 11, 'parent_id' => null, 'name' => 'supports', 'slug' => 'supports', 'href' => '/supports', 'icon' => 'streamline-ultimate:shopping-cart-full-bold', 'sequance' => 11, 'status' => 1],
+            ['id' => 12, 'parent_id' => null, 'name' => 'OthersPages', 'slug' => 'pages', 'href' => '/pages', 'icon' => 'ic:baseline-library-books', 'sequance' => 12, 'status' => 1],
             ['id' => 13, 'parent_id' => null, 'name' => 'Roles Permission', 'slug' => 'roles-permission', 'href' => '/roles', 'icon' => 'mdi:shield-key', 'sequance' => 13, 'status' => 1],
-            
+            ['id' => 14, 'parent_id' => null, 'name' => 'Customizations', 'slug' => 'customizations', 'href' => '#', 'icon' => 'mdi:cart-arrow-right', 'sequance' => 14, 'status' => 1],
+
             //Customer Side
-            ['id' => 14, 'parent_id' => null, 'name' => 'Make an Order', 'slug' => 'make-an-order', 'href' => '/', 'icon' => 'streamline-ultimate:shopping-cart-full-bold', 'sequance' => 14, 'status' => 1],
-            ['id' => 15, 'parent_id' => null, 'name' => 'My Orders', 'slug' => 'my-order', 'href' => '/my-orders', 'icon' => 'streamline:shopping-cart-check-solid', 'sequance' => 15, 'status' => 1],
-            ['id' => 16, 'parent_id' => null, 'name' => 'My Reviews', 'slug' => 'my-reviews', 'href' => '/my-reviews', 'icon' => 'fluent:vehicle-truck-checkmark-48-filled', 'sequance' => 16, 'status' => 1],
-            ['id' => 17, 'parent_id' => null, 'name' => 'Track Orders', 'slug' => 'track-orders', 'href' => 'track-orders', 'icon' => 'bi:cart-x-fill', 'sequance' => 17, 'status' => 1],
-            ['id' => 18, 'parent_id' => null, 'name' => 'Take Support', 'slug' => 'take-support', 'href' => '/take-support', 'icon' => 'mdi:cart-arrow-right', 'sequance' => 18, 'status' => 1],
-            
-            //SubMenu of Sidebar Menus For Admin Only
-            ['id' => 19, 'parent_id' => 7, 'name' => 'Offers', 'slug' => 'offers', 'href' => '/offers', 'icon' => 'hugeicons:coupon-02', 'sequance' => 19, 'status' => 1],
+            ['id' => 15, 'parent_id' => null, 'name' => 'Make an Order', 'slug' => 'make-an-order', 'href' => '/', 'icon' => 'streamline-ultimate:shopping-cart-full-bold', 'sequance' => 15, 'status' => 1],
+            ['id' => 16, 'parent_id' => null, 'name' => 'My Orders', 'slug' => 'my-order', 'href' => '/my-orders', 'icon' => 'streamline:shopping-cart-check-solid', 'sequance' => 16, 'status' => 1],
+            ['id' => 17, 'parent_id' => null, 'name' => 'My Reviews', 'slug' => 'my-reviews', 'href' => '/my-reviews', 'icon' => 'fluent:vehicle-truck-checkmark-48-filled', 'sequance' => 17, 'status' => 1],
+            ['id' => 18, 'parent_id' => null, 'name' => 'Track Orders', 'slug' => 'track-orders', 'href' => 'track-orders', 'icon' => 'bi:cart-x-fill', 'sequance' => 18, 'status' => 1],
+            ['id' => 19, 'parent_id' => null, 'name' => 'Take Support', 'slug' => 'tickets', 'href' => '/tickets', 'icon' => 'mdi:cart-arrow-right', 'sequance' => 19, 'status' => 1],
+
+            //SubMenu for Marketing
+            ['id' => 20, 'parent_id' => 7, 'name' => 'Tackings', 'slug' => 'tracckings', 'href' => '/tracckings', 'icon' => 'hugeicons:coupon-02', 'sequance' => 20, 'status' => 1],
             ['id' => 21, 'parent_id' => 7, 'name' => 'Delivery Zones', 'slug' => 'delivery-zones', 'href' => '/delivery-zones', 'icon' => 'ic:baseline-delivery-dining', 'sequance' => 21, 'status' => 1],
 
+            //SubMenu for Reports
             ['id' => 22, 'parent_id' => 8, 'name' => 'Sales Report', 'slug' => 'sales-report', 'href' => '/reports/sales', 'icon' => 'mdi:cart-arrow-right', 'sequance' => 22, 'status' => 1],
             ['id' => 23, 'parent_id' => 8, 'name' => 'Customer Report', 'slug' => 'customers-report', 'href' => '/reports/customer', 'icon' => 'mdi:cart-arrow-right', 'sequance' => 23, 'status' => 1],
             ['id' => 24, 'parent_id' => 8, 'name' => 'Products Report', 'slug' => 'products-report', 'href' => '/reports/products', 'icon' => 'mdi:cart-arrow-right', 'sequance' => 24, 'status' => 1],
+
+            //Customizations Menu
+            ['id' => 25, 'parent_id' => 14, 'name' => 'Carusole', 'slug' => 'carusole', 'href' => '/Carusole', 'icon' => 'mdi:cart-arrow-right', 'sequance' => 25, 'status' => 1],
+            ['id' => 26, 'parent_id' => 14, 'name' => 'Banner', 'slug' => 'banner', 'href' => '/Carusole', 'icon' => 'mdi:cart-arrow-right', 'sequance' => 26, 'status' => 1],
+            ['id' => 27, 'parent_id' => 14, 'name' => 'FAQ', 'slug' => 'faq', 'href' => '/faq', 'icon' => 'mdi:cart-arrow-right', 'sequance' => 27, 'status' => 1],
 
         ];
 

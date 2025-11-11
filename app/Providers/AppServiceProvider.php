@@ -24,7 +24,7 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         Inertia::share([
-            'auth' => fn () => ['user' => Auth::user()],
+            'auth' => fn() => ['user' => Auth::user()],
             'settings' => function () {
                 $store = StoreSetting::first();
 
@@ -39,6 +39,7 @@ class AppServiceProvider extends ServiceProvider
                         : asset('default-logo.png'),
                     'meta_title' => $store->meta_title ?? null,
                     'meta_description' => $store->meta_description ?? null,
+                    'fb_pixel_id' => $store->fb_pixel_id ?? null,
                 ];
             },
             'sidebar' => function () {

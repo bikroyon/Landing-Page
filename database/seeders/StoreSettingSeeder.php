@@ -56,6 +56,8 @@ class StoreSettingSeeder extends Seeder
                 'order_summary_title' => 'অর্ডারের বিস্তারিত',
                 'payment_title' => 'পেমেন্ট',
                 'submit_button' => 'অর্ডার করুন',
+                'fb_pixel_id' => '123456789',
+                'fb_pixel_access_token'=>'sd12sd1f5dfds4f5s4df8sd4f6sd54f8'
             ]
         );
     }

@@ -3,9 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\Order;
-use App\Models\OrderItem;
-use App\Models\Product;
-use App\Models\DeliveryZone;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
@@ -29,112 +26,27 @@ class OrderController extends Controller
     }
 
 
-
-    public function store(Request $request)
-    {
-        // ✅ Validate Request
-        $data = $request->validate([
-            'customer_name' => 'required|string|max:255',
-            'customer_phone' => 'required|string|max:50',
-            'customer_email' => 'nullable|email',
-            'customer_address' => 'required|string',
-
-            'items' => 'required|array|min:1',
-            'items.*.product_id' => 'required|exists:products,id',
-            'items.*.quantity' => 'required|integer|min:1',
-            'items.*.variant_index' => 'required|integer|min:0',
-            'items.*.extra_price' => 'nullable|numeric|min:0',
-
-            'delivery_zone_id' => 'required|exists:delivery_zones,id',
-            'payment_method_id' => 'required|exists:payment_methods,id',
-
-            'additional_note' => 'nullable|string',
-            'transaction_id' => 'nullable|string|max:255',
-            'trabsaction_mobile_number' => 'nullable|string|max:255',
-        ]);
-
-        $user = Auth::user();
-
-
-        // ✅ Calculate Subtotal (With Variant + Extras)
-        $subtotal = 0;
-
-        foreach ($data['items'] as $item) {
-            $product = Product::find($item['product_id']);
-
-            $variantIndex = $item['variant_index'];
-            $variantPrice = $product->variants[$variantIndex]['price'] ?? $product->price;
-
-            $extra = $item['extra_price'] ?? 0;
-
-            $subtotal += ($variantPrice + $extra) * $item['quantity'];
-        }
-
-
-        // ✅ Delivery Fee Logic From DeliveryZone Model
-        $zone = DeliveryZone::find($data['delivery_zone_id']);
-
-        $deliveryFee = $zone->effectiveFee($subtotal);  // ✅ FREE IF SUBTOTAL ≥ free_delivery_min_order
-
-        // ✅ Total (No Discount)
-        $totalAmount = $subtotal + $deliveryFee;
-
-
-        // ✅ Create Order
-        $order = Order::create([
-            'user_id'        => $user?->id,
-            'customer_name'  => $data['customer_name'],
-            'customer_phone' => $data['customer_phone'],
-            'customer_email' => $data['customer_email'],
-            'customer_address' => $data['customer_address'],
-
-            'subtotal'       => $subtotal,
-            'delivery_fee'   => $deliveryFee,
-            'total_amount'   => $totalAmount,
-
-            'delivery_zone_id' => $zone->id,
-            'payment_method_id' => $data['payment_method_id'],
-
-            'additional_note' => $data['additional_note'],
-            'transaction_id' => $data['transaction_id'],
-            'trabsaction_mobile_number' => $data['trabsaction_mobile_number'],
-
-            'status' => 'pending',
-        ]);
-
-
-        // ✅ Save Order Items
-        foreach ($data['items'] as $item) {
-            $product = Product::find($item['product_id']);
-
-            $variantIndex = $item['variant_index'];
-            $variantPrice = $product->variants[$variantIndex]['price'] ?? $product->price;
-
-            $extra = $item['extra_price'] ?? 0;
-            $finalPrice = $variantPrice + $extra;
-
-            $order->items()->create([
-                'product_id' => $product->id,
-                'product_name' => $product->name,
-                'product_price' => $finalPrice,
-                'quantity' => $item['quantity'],
-                'total_price' => $finalPrice * $item['quantity'],
-            ]);
-        }
-
-
-        return redirect()->route('order.thankyou', $order->id);
-    }
-
-
-
-
-
     public function show(Order $order)
     {
         return Inertia::render('orders/Show', [
             'order' => $order->load('items.product')
         ]);
+    }
+
+    public function updateStatus(Request $request, $order_number)
+    {
+        $request->validate([
+            'status' => 'required|string'
+        ]);
+
+        $order = Order::where('order_number', $order_number)->firstOrFail();
+        $oldStatus = $order->status;
+        $order->update([
+            'status' => $request->status
+        ]);
+        event(new \App\Events\OrderStatusUpdated($order, $oldStatus, $order->status));
+
+        return back();
     }
 
 
@@ -151,11 +63,79 @@ class OrderController extends Controller
     {
         $user = Auth::user();
 
+        $orders = Order::with(['items.product', 'paymentMethod', 'deliveryZone'])
+            ->where('user_id', $user->id)
+            ->latest()
+            ->paginate(10);
+
+        // Map each order like the thankyou page
+        $mappedOrders = $orders->through(function ($order) {
+            $items = $order->items->map(function ($item) {
+                return [
+                    'id' => $item->id,
+                    'quantity' => $item->quantity,
+                    'price' => $item->price,
+                    'subtotal' => $item->subtotal,
+                    'variant_index' => $item->variant_index,
+                    'extra_price' => $item->extra_price,
+                    'product' => [
+                        'id' => $item->product->id,
+                        'name' => $item->product->name,
+                        'price' => $item->product->price,
+                        'image' => $item->product->image,
+                        'variations' => $item->product->variations,
+                    ],
+                ];
+            });
+
+            return [
+                'id' => $order->id,
+                'order_number' => $order->order_number,
+                'customer_name' => $order->customer_name,
+                'customer_email' => $order->customer_email,
+                'customer_phone' => $order->customer_phone,
+                'customer_address' => $order->customer_address,
+                'payment_method' => $order->paymentMethod?->name ?? 'N/A',
+                'delivery_zone' => $order->deliveryZone?->name ?? 'N/A',
+                'delivery_fee' => $order->delivery_fee,
+                'subtotal' => $order->subtotal,
+                'total_discount' => $order->total_discount,
+                'total_amount' => $order->total_amount,
+                'status' => $order->status,
+                'items' => $items,
+            ];
+        });
+
         return Inertia::render('orders/MyOrders', [
-            'orders' => Order::with(['items.product'])
-                ->where('user_id', $user->id)
-                ->latest()
-                ->paginate(10)
+            'orders' => $mappedOrders->toArray() + [
+                'links' => $orders->links(),
+                'current_page' => $orders->currentPage(),
+                'per_page' => $orders->perPage(),
+                'total' => $orders->total(),
+            ],
         ]);
+    }
+    public function cancel(Order $order, Request $request)
+    {
+        //validate note input
+        $request->validate([
+            'note' => 'nullable|string|max:1000',
+        ]);
+
+        $user = Auth::user();
+
+        if ($order->user_id !== $user->id) {
+            abort(403);
+        }
+
+        if ($order->status !== 'pending') {
+            return back()->withErrors('Order cannot be cancelled at this stage.');
+        }
+
+        $order->status = 'cancelled';
+        $order->note = $request->input('note', null);
+        $order->save();
+
+        return redirect()->back()->with('success', 'Order cancelled successfully.');
     }
 }

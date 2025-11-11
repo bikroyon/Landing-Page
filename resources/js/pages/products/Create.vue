@@ -6,7 +6,7 @@
             <div class="mb-4 flex items-center justify-between">
                 <h1 class="text-2xl font-bold">Create Product</h1>
                 <Button @click="submit" :disabled="form.processing"
-                    >Save</Button
+                    >Save <Icon icon="ic:round-save"/> </Button
                 >
             </div>
 
@@ -66,7 +66,7 @@
 
                     <!-- Right: Image -->
                     <div class="flex items-center justify-center">
-                        <ImageUploader v-model="form.image" />
+                        <ImageUploader v-model="form.image" class="w-full" />
                     </div>
                 </div>
 
@@ -90,6 +90,7 @@ import ToggleSwitch from '@/components/ToggleSwitch.vue';
 import Button from '@/components/ui/button/Button.vue';
 import Input from '@/components/ui/input/Input.vue';
 import AppLayout from '@/layouts/AppLayout.vue';
+import { Icon } from '@iconify/vue';
 import { Head, router, useForm } from '@inertiajs/vue3';
 
 const breadcrumbs = [

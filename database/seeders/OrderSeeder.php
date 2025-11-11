@@ -41,6 +41,7 @@ class OrderSeeder extends Seeder
                 'subtotal' => $product->price,
                 'total_amount' => $product->price,
                 'status' => 'completed',
+                'order_number' => Order::generateOrderNumber(),
             ]);
 
             OrderItem::create([

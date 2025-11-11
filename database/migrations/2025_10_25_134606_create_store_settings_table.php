@@ -58,7 +58,22 @@ return new class extends Migration
             $table->string('order_summary_title')->default('Order Summary');
             $table->string('payment_title')->default('Payment Method');
             $table->string('submit_button')->default('Place Order');
+            $table->string('fb_pixel_id')->nullable();
+            $table->string('fb_pixel_access_token')->nullable();
+            // Email / SMTP
+            $table->string('mail_driver')->default('smtp');
+            $table->string('mail_host')->nullable();
+            $table->integer('mail_port')->default(587);
+            $table->string('mail_username')->nullable();
+            $table->string('mail_password')->nullable();
+            $table->string('mail_encryption')->default('tls');
+            $table->string('mail_from_address')->nullable();
+            $table->string('mail_from_name')->nullable();
 
+            // SMS Gateway
+            $table->string('sms_api_url')->nullable();
+            $table->string('sms_api_key')->nullable();
+            $table->string('sms_sender_id')->nullable();
             $table->timestamps();
         });
     }
