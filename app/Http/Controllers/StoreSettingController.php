@@ -84,14 +84,15 @@ class StoreSettingController extends Controller
             'submit_button' => 'nullable|string|max:255',
             'fb_pixel_id' => 'nullable|string|max:255',
             'fb_pixel_access_token' => 'nullable|string|max:255',
+            'fraudchecker_api_key'=>'nullable|string|max:255',
             // Email / SMTP
-            'mail_driver' => 'required|string|in:smtp,sendmail,mailgun',
-            'mail_host' => 'required|string|max:255',
-            'mail_port' => 'required|integer',
+            'mail_driver' => 'nullable|string|in:smtp,sendmail,mailgun',
+            'mail_host' => 'nullable|string|max:255',
+            'mail_port' => 'nullable|integer',
             'mail_username' => 'nullable|string|max:255',
             'mail_password' => 'nullable|string|max:255',
             'mail_encryption' => 'nullable|string|in:tls,ssl',
-            'mail_from_address' => 'required|email|max:255',
+            'mail_from_address' => 'nullable|email|max:255',
             'mail_from_name' => 'nullable|string|max:255',
 
             // SMS

@@ -1,65 +1,89 @@
 <template>
     <div class="mt-4">
-        <h2 class="mb-2 text-xl font-bold">{{ title }}</h2>
-
+        <h2
+            class="mb-4 flex items-center gap-2 text-2xl font-extrabold text-gray-700"
+        >
+            <span class="h-6 w-1 rounded-full bg-green-500"></span>
+            {{ title }}
+        </h2>
         <div class="flex flex-col gap-2">
-
             <!-- Name -->
             <div>
-                <label v-if="label">{{ nameLabel }} *</label>
+                <label class="text-sm font-semibold text-gray-500" v-if="label"
+                    >{{ nameLabel }} *</label
+                >
                 <input
                     v-model="form.customer_name"
                     @input="clearError('customer_name')"
-                    placeholder="Name"
-                    class="rounded border p-2 w-full"
+                    placeholder="আপনার নাম"
+                    class="w-full rounded border p-2 text-sm outline-[1px] outline-gray-200 focus:outline-green-600"
                 />
-                <p v-if="errors.customer_name" class="text-red-500 text-sm">
+                <p
+                    v-if="errors.customer_name"
+                    class="p-1 text-xs text-rose-500"
+                >
                     {{ errors.customer_name }}
                 </p>
             </div>
 
             <!-- Phone -->
             <div>
-                <label v-if="label">{{ phoneLabel }} *</label>
+                <label class="text-sm font-semibold text-gray-500" v-if="label"
+                    >{{ phoneLabel }} *</label
+                >
                 <input
                     v-model="form.customer_phone"
                     @input="clearError('customer_phone')"
-                    placeholder="Phone"
-                    class="rounded border p-2 w-full"
+                    placeholder="ফোন নাম্বার"
+                    class="w-full rounded border p-2 text-sm outline-[1px] outline-gray-200 focus:outline-green-600"
                 />
-                <p v-if="errors.customer_phone" class="text-red-500 text-sm">
+                <p
+                    v-if="errors.customer_phone"
+                    class="p-1 text-xs text-rose-500"
+                >
                     {{ errors.customer_phone }}
                 </p>
             </div>
 
             <!-- Email -->
             <div>
-                <label v-if="label">{{ emailLabel || 'Email' }}</label>
+                <label
+                    class="text-sm font-semibold text-gray-500"
+                    v-if="label"
+                    >{{ emailLabel || 'Email' }}</label
+                >
                 <input
                     v-model="form.customer_email"
                     @input="clearError('customer_email')"
-                    placeholder="Email"
-                    class="rounded border p-2 w-full"
+                    placeholder="আপনার ই-মেইল"
+                    class="w-full rounded border p-2 text-sm outline-[1px] outline-gray-200 focus:outline-green-600"
                 />
-                <p v-if="errors.customer_email" class="text-red-500 text-sm">
+                <p
+                    v-if="errors.customer_email"
+                    class="p-1 text-xs text-rose-500"
+                >
                     {{ errors.customer_email }}
                 </p>
             </div>
 
             <!-- Address -->
             <div>
-                <label v-if="label">{{ addressLabel }} *</label>
+                <label class="text-sm font-semibold text-gray-500" v-if="label"
+                    >{{ addressLabel }} *</label
+                >
                 <textarea
                     v-model="form.customer_address"
                     @input="clearError('customer_address')"
-                    placeholder="Address"
-                    class="rounded border p-2 w-full"
+                    placeholder="আপনার এড্রেস"
+                    class="w-full rounded border p-2 text-sm outline-[1px] outline-gray-200 focus:outline-green-600"
                 ></textarea>
-                <p v-if="errors.customer_address" class="text-red-500 text-sm">
+                <p
+                    v-if="errors.customer_address"
+                    class="p-1 text-xs text-red-500"
+                >
                     {{ errors.customer_address }}
                 </p>
             </div>
-
         </div>
     </div>
 </template>
@@ -75,13 +99,13 @@ const props = defineProps({
     addressLabel: String,
     title: String,
     form: Object,
-    errors: Object   // ✅ New
+    errors: Object,
 });
 
 // ✅ User edits → clear error immediately
 const clearError = (field: string) => {
     if (props.errors && props.errors[field]) {
-        props.errors[field] = "";
+        props.errors[field] = '';
     }
 };
 </script>

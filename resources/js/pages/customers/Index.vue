@@ -1,6 +1,7 @@
 <template>
     <AppLayout :breadcrumbs="breadcrumbs">
-        <div class="p-6">
+        <Head title="All Customers" />
+        <div class="p-4 py-2">
             <!-- Header -->
             <div class="mb-6">
                 <div>
@@ -16,7 +17,7 @@
                             placeholder="Search by name, email or phone"
                             class="w-full rounded border p-2"
                         />
-                        <Button type="submit"> Search </Button>
+                        <Button type="submit"> <Icon icon="iconamoon:search-bold"/> </Button>
                     </form>
                     <div class="flex gap-2">
                         <Button
@@ -34,7 +35,7 @@
             </div>
 
             <!-- Table -->
-            <div class="overflow-x-auto rounded shadow">
+            <div class="overflow-x-auto rounded text-xs shadow">
                 <table class="w-full table-auto text-left">
                     <thead>
                         <tr class="bg-gray-200">
@@ -190,7 +191,7 @@ import Input from '@/components/ui/input/Input.vue';
 import AppLayout from '@/layouts/AppLayout.vue';
 import { BreadcrumbItem } from '@/types';
 import { Icon } from '@iconify/vue';
-import { Link, router, usePage } from '@inertiajs/vue3';
+import { Head, Link, router, usePage } from '@inertiajs/vue3';
 import { ref } from 'vue';
 
 const page = usePage();

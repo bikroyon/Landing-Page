@@ -1,6 +1,7 @@
 <template>
     <AppLayout :breadcrumbs="breadcrumbs">
-        <div class="p-6">
+        <Head title="All Reviews" />
+        <div class="p-4 py-2">
             <!-- Header -->
             <div class="mb-6">
                 <div>
@@ -16,7 +17,7 @@
                             placeholder="Search by name, email or phone"
                             class="w-full rounded border p-2"
                         />
-                        <Button type="submit"> Search </Button>
+                        <Button type="submit"> <Icon icon="iconamoon:search-bold"/> </Button>
                     </form>
                     <div class="flex gap-2">
                         <Button
@@ -151,7 +152,7 @@ import { Input } from '@/components/ui/input';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import { BreadcrumbItem } from '@/types';
 import { Icon } from '@iconify/vue';
-import { Link, useForm, usePage } from '@inertiajs/vue3';
+import { Head, Link, useForm, usePage } from '@inertiajs/vue3';
 import { ref } from 'vue';
 import { router } from '@inertiajs/vue3';
 

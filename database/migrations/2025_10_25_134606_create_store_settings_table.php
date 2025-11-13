@@ -60,6 +60,7 @@ return new class extends Migration
             $table->string('submit_button')->default('Place Order');
             $table->string('fb_pixel_id')->nullable();
             $table->string('fb_pixel_access_token')->nullable();
+             $table->string('fraudchecker_api_key')->nullable();
             // Email / SMTP
             $table->string('mail_driver')->default('smtp');
             $table->string('mail_host')->nullable();

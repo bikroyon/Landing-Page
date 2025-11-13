@@ -1,14 +1,14 @@
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}"
-      @class(['dark'=> ($appearance ?? 'system') === 'dark'])>
+    @class(['dark'=> ($appearance ?? 'system') === 'dark'])>
 
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     {{-- ✅ Detect system dark mode --}}
     <script>
-        (function () {
+        (function() {
             const appearance = '{{ $appearance ?? "system" }}';
 
             if (appearance === 'system') {
@@ -23,29 +23,29 @@
 
     {{-- ✅ Facebook Pixel (Loaded from Database) --}}
     @if(!empty($page['props']['settings']['fb_pixel_id']))
-        <script>
-            !(function (f, b, e, v, n, t, s) {
-                if (f.fbq) return;
-                n = f.fbq = function () {
-                    n.callMethod ?
-                        n.callMethod.apply(n, arguments) : n.queue.push(arguments)
-                };
-                if (!f._fbq) f._fbq = n;
-                n.push = n;
-                n.loaded = !0;
-                n.version = '2.0';
-                n.queue = [];
-                t = b.createElement(e);
-                t.async = !0;
-                t.src = v;
-                s = b.getElementsByTagName(e)[0];
-                s.parentNode.insertBefore(t, s)
-            })(window, document, 'script',
-                'https://connect.facebook.net/en_US/fbevents.js');
+    <script>
+        !(function(f, b, e, v, n, t, s) {
+            if (f.fbq) return;
+            n = f.fbq = function() {
+                n.callMethod ?
+                    n.callMethod.apply(n, arguments) : n.queue.push(arguments)
+            };
+            if (!f._fbq) f._fbq = n;
+            n.push = n;
+            n.loaded = !0;
+            n.version = '2.0';
+            n.queue = [];
+            t = b.createElement(e);
+            t.async = !0;
+            t.src = v;
+            s = b.getElementsByTagName(e)[0];
+            s.parentNode.insertBefore(t, s)
+        })(window, document, 'script',
+            'https://connect.facebook.net/en_US/fbevents.js');
 
-            fbq('init', '{{ $page["props"]["settings"]["fb_pixel_id"] }}');
-            fbq('track', 'PageView');
-        </script>
+        fbq('init', '{{ $page["props"]["settings"]["fb_pixel_id"] }}');
+        fbq('track', 'PageView');
+    </script>
     @endif
 
     {{-- ✅ Custom Scrollbar & Theme --}}

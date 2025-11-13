@@ -3,7 +3,7 @@
         <Head title="All Products" />
         <div class="p-4 py-2">
             <div>
-                <h1 class="mb-4 text-2xl font-bold">Products</h1>
+                <h1 class="mb-4 text-2xl font-bold">All Products</h1>
             </div>
 
             <!-- Search -->
@@ -15,7 +15,7 @@
                         placeholder="Search products..."
                         class="w-64 rounded border p-2"
                     />
-                    <Button type="submit" class=""> Search </Button>
+                    <Button type="submit" class=""> <Icon name="search"/> </Button>
                 </form>
 
                 <div class="flex gap-2">

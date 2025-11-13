@@ -1,11 +1,11 @@
 <template>
     <AppLayout>
-        <div class="p-6">
+        <div class="p-4 py-2">
             <!-- Header -->
             <div class="mb-6 flex items-center justify-between">
                 <h1 class="text-2xl font-bold">Store Settings</h1>
                 <Button type="button" @click="submit" class="">
-                    Save Settings
+                    Save Settings <Icon icon="ic:round-save" />
                 </Button>
             </div>
             <!-- ✅ RekaUI Tabs -->
@@ -436,6 +436,9 @@
                     <Input v-model="form.fb_pixel_id" />
                     <label>Facebook Pixel Token</label>
                     <Input v-model="form.fb_pixel_access_token" />
+
+                    <label>Fraud Spy API KEY</label>
+                    <Input v-model="form.fraudchecker_api_key" />
                 </TabsContent>
             </TabsRoot>
         </div>
@@ -445,14 +448,15 @@
 <script setup lang="ts">
 import Input from '@/components/ui/input/Input.vue';
 import AppLayout from '@/layouts/AppLayout.vue';
-import { router, useForm, usePage } from '@inertiajs/vue3';
+import { useForm, usePage } from '@inertiajs/vue3';
 import { ref, watch } from 'vue';
-// ✅ Import RekaUI Tabs
 import ImageUploader from '@/components/ImageUploader.vue';
 import ToggleSwitch from '@/components/ToggleSwitch.vue';
 import Button from '@/components/ui/button/Button.vue';
+import { useToast } from '@/composables/useToast';
+import { Icon } from '@iconify/vue';
 import { TabsContent, TabsList, TabsRoot, TabsTrigger } from 'reka-ui';
-
+const { showToast } = useToast();
 // ✅ Tabs list
 const tabs = [
     'Basic Info',
@@ -531,6 +535,7 @@ const form = useForm({
     //Tracking
     fb_pixel_id: setting.fb_pixel_id || '',
     fb_pixel_access_token: setting.fb_pixel_access_token || '',
+    fraudchecker_api_key: setting.fraudchecker_api_key || '',
 
     //email & sms
     mail_driver: setting.mail_driver || 'smtp',
@@ -541,13 +546,28 @@ const form = useForm({
     mail_encryption: setting.mail_encryption || 'tls',
     mail_from_address: setting.mail_from_address || '',
     mail_from_name: setting.mail_from_name || '',
-
     sms_api_url: setting.sms_api_url || '',
     sms_api_key: setting.sms_api_key || '',
     sms_sender_id: setting.sms_sender_id || '',
 });
 
 function submit() {
-    router.post('/store-settings/update', form);
+    form.post('/store-settings/update', {
+        onSuccess: () => {
+            showToast(
+                'ধন্যবাদ!',
+                'সেটিংস সফলভাবে আপডেট হয়েছে।',
+                'success',
+            );
+            form.reset();
+        },
+        onError: () => {
+            showToast(
+                'দুঃক্ষিত!',
+                'কোথাও কিছু ভুল হয়েছে, দয়া করে চেক করুন।',
+                'error',
+            );
+        },
+    });
 }
 </script>

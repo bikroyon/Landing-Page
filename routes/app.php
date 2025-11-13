@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\DeliveryZoneController;
+use App\Http\Controllers\FraudCheckerController;
 use App\Http\Controllers\LandingPageController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\OrderController;
@@ -91,4 +92,8 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/roles/{role}/permissions', [RoleAccessController::class, 'edit'])->name('roles.access.edit');
     Route::post('/roles/{role}/permissions', [RoleAccessController::class, 'update'])->name('roles.access.update');
 
+    // Fraud Checker 
+    Route::get('/fraud-checker', [FraudCheckerController::class, 'index'])->name('fraud.index');
+    Route::post('/fraud-checker/search', [FraudCheckerController::class, 'search'])->name('fraud.search');
+    
 });

@@ -4,6 +4,7 @@ import { SidebarTrigger } from '@/components/ui/sidebar';
 import type { BreadcrumbItemType } from '@/types';
 import Button from './ui/button/Button.vue';
 import Icon from './Icon.vue';
+import { Link } from '@inertiajs/vue3';
 
 withDefaults(
     defineProps<{
@@ -13,6 +14,14 @@ withDefaults(
         breadcrumbs: () => [],
     },
 );
+const goBack = () => {
+  if (window.history.length > 1) {
+    window.history.back()
+  } else {
+    // fallback (e.g. direct entry)
+    window.location.href = '/'
+  }
+}
 </script>
 
 <template>
@@ -26,8 +35,8 @@ withDefaults(
             </template>
         </div>
         <div class="flex gap-2">
-            <Button variant="secondary" > <Icon name="Eye"/> </Button>
-            <Button variant="default" > <Icon name="CircleArrowLeft"/> </Button>
+            <Link href="/"><Button variant="secondary" > <Icon name="Eye"/> </Button></Link>
+            <Button variant="default" @click="goBack" > <Icon name="CircleArrowLeft"/> </Button>
         </div>
     </header>
 </template>

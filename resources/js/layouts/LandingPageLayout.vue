@@ -5,7 +5,7 @@
     <meta name="description" :content="settings.meta_description || ''" />
   </Head>
 
-  <div>
+  <div class="bg-white">
     <ToastContainer />
     <LandingPageHeader />
     <slot />
@@ -23,3 +23,8 @@ const page = usePage();
 const settings = page.props.settings;
 
 </script>
+<style scoped>
+* {
+    font-family: 'Hind Siliguri', sans-serif;
+}
+</style>

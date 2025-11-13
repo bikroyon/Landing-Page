@@ -1,6 +1,7 @@
 <template>
     <AppLayout title="Orders">
-        <div class="container mx-auto p-6">
+        <Head title="All Orders" />
+        <div class="container mx-auto p-4 py-2">
             <!-- Header -->
             <div class="mb-6">
                 <div>
@@ -16,7 +17,9 @@
                             placeholder="Search..."
                             class="w-64 rounded border px-3 py-2"
                         />
-                        <Button type="submit"> Search </Button>
+                        <Button type="submit">
+                            <Icon icon="iconamoon:search-bold" />
+                        </Button>
                     </form>
                     <div class="flex gap-2">
                         <Button
@@ -220,6 +223,16 @@
 
                             <td class="px-2 py-3">
                                 <div class="flex gap-2">
+                                    <Link :href="`/fraud-checker?phone=${ order.customer_phone }`">
+                                        <Button
+                                            size="xs"
+                                        >
+                                            <Icon
+                                                icon="solar:shield-user-bold"
+                                                class="h-4 w-4"
+                                            />
+                                        </Button>
+                                    </Link>
                                     <Button size="xs" @click="openOrder(order)">
                                         <Icon
                                             icon="lucide:eye"
@@ -424,7 +437,7 @@ import Input from '@/components/ui/input/Input.vue';
 import { useToast } from '@/Composables/useToast';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import { Icon } from '@iconify/vue';
-import { Link, router, useForm } from '@inertiajs/vue3';
+import { Head, Link, router, useForm } from '@inertiajs/vue3';
 import {
     DialogClose,
     DialogContent,

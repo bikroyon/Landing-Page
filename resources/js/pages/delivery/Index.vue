@@ -46,7 +46,7 @@ const deleteZone = (zoneId) => {
     <AppLayout :breadcrumbs="breadcrumbs">
         <Head title="Delivery Zones" />
 
-        <div class="space-y-6 p-6">
+        <div class="space-y-6 p-4 py-2">
             <!-- Header -->
             <div class="mb-6">
                 <div>
@@ -61,7 +61,7 @@ const deleteZone = (zoneId) => {
                             placeholder="Search by name, email or phone"
                             class="w-full rounded border p-2"
                         />
-                        <Button type="submit"> Search </Button>
+                        <Button type="submit"> <Icon icon="iconamoon:search-bold" /> </Button>
                     </form>
                     <div class="flex gap-2">
                         <Button

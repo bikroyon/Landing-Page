@@ -45,6 +45,7 @@ class StoreSetting extends Model
         'submit_button',
         'fb_pixel_id',
         'fb_pixel_access_token',
+        'fraudchecker_api_key',
         'mail_driver',
         'mail_host',
         'mail_port',

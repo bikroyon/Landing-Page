@@ -67,14 +67,32 @@ class SupportController extends Controller
     }
 
     /** ✅ Admin – View All Tickets */
-    public function adminIndex()
+    public function adminIndex(Request $request)
     {
-        $tickets = Support::with(['user', 'order'])->latest()->paginate(10);
+        $search = $request->input('search');
+
+        $tickets = Support::with(['user', 'order'])
+            ->when($search, function ($q) use ($search) {
+                $q->whereHas('user', function ($userQuery) use ($search) {
+                    $userQuery->where('name', 'like', "%{$search}%")
+                        ->orWhere('email', 'like', "%{$search}%")
+                        ->orWhere('phone', 'like', "%{$search}%");
+                })
+                    ->orWhere('subject', 'like', "%{$search}%")
+                    ->orWhere('category', 'like', "%{$search}%");
+            })
+            ->latest()
+            ->paginate(10)
+            ->withQueryString();
 
         return Inertia::render('support/Index', [
-            'tickets' => $tickets
+            'tickets' => $tickets,
+            'filters' => [
+                'search' => $search,
+            ]
         ]);
     }
+
     /** ✅ Admin – View Single Ticket */
     public function adminShow(Support $ticket)
     {

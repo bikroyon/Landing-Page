@@ -1,9 +1,9 @@
 <template>
     <LandingPageLayout>
         <LandingPageDesign />
-        <div class="container mx-auto p-6">
+        <div class="mx-auto max-w-7xl p-6">
             <div>
-                <h2 class="mb-4 text-2xl font-bold">
+                <h2 class="mb-4 text-2xl font-bold text-gray-600">
                     {{ store_settings.products_title }}
                 </h2>
             </div>
@@ -44,14 +44,18 @@
                             :subtotal="subtotal"
                         />
 
-                        <div class="flex flex-col">
-                            <label for="additional_note">
+                        <div class="mt-4 flex flex-col">
+                            <label
+                                for="additional_note"
+                                class="mb-1 text-xl font-bold text-gray-600"
+                            >
                                 {{ store_settings.additional_note_title }}
                             </label>
                             <textarea
                                 name="additional_note"
                                 v-model="form.additional_note"
                                 id=""
+                                class="w-full rounded border p-2 text-sm outline-[1px] outline-gray-200 focus:outline-green-600"
                             ></textarea>
                         </div>
                     </div>
@@ -63,7 +67,9 @@
                             :products="products"
                             :deliveryFee="form.delivery_fee || 0"
                             :discount="discount"
+                            :paymentMethodCode="selectedPaymentCode"
                         />
+
                         <!-- Payment Method -->
                         <SelectPaymentMethod
                             :title="store_settings.payment_title"
@@ -74,13 +80,23 @@
                         <!-- Submit Button -->
                         <button
                             type="submit"
-                            class="mt-4 rounded bg-blue-600 px-4 py-2 text-white"
+                            class="mt-4 w-full rounded-xl bg-green-600 px-4 py-2 text-lg text-white"
                             :disabled="!hasSelectedItems || form.processing"
                         >
-                            <span v-if="form.processing">Placing Order...</span>
-                            <span v-else>{{
-                                store_settings.submit_button
-                            }}</span>
+                            <span
+                                class="flex items-center justify-center gap-2"
+                                v-if="form.processing"
+                            >
+                                দয়া করে অপেক্ষা করুন
+                                <Icon icon="eos-icons:three-dots-loading" />
+                            </span>
+                            <span
+                                class="flex items-center justify-center gap-2"
+                                v-else
+                            >
+                                <Icon icon="fa6-solid:cart-plus" />
+                                {{ store_settings.submit_button }}</span
+                            >
                         </button>
                     </div>
                 </div>
@@ -100,6 +116,7 @@ import { useToast } from '@/Composables/useToast';
 import { fbPixel } from '@/helpers/fbPixel';
 import LandingPageLayout from '@/layouts/LandingPageLayout.vue';
 import type { DeliveryZone, PaymentMethod, Product, Setting } from '@/types';
+import { Icon } from '@iconify/vue';
 import { useForm, usePage } from '@inertiajs/vue3';
 import { computed, onMounted, ref } from 'vue';
 const { showToast } = useToast();
@@ -137,6 +154,12 @@ const store_settings = computed(() => props.settings || []);
 const products = computed(() => props.products || []);
 const deliveryZones = computed(() => props.deliveryZones || []);
 const paymentMethods = computed(() => props.paymentMethods || []);
+const selectedPaymentCode = computed(() => {
+  const method = paymentMethods.value.find(
+    (m) => m.id === form.payment_method_id
+  );
+  return method?.code || null;
+});
 
 const form = useForm({
     customer_name: user?.name || '',
@@ -214,3 +237,4 @@ function submitOrder() {
     });
 }
 </script>
+<style scoped></style>

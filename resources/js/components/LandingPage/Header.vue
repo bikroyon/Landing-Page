@@ -1,96 +1,152 @@
 <template>
-  <header class="absolute top-0 left-0 w-full bg-transparent z-50">
-    <div class="container mx-auto px-4 py-3 flex items-center justify-between">
-      <!-- Logo -->
-      <div class="text-2xl font-bold text-indigo-600 cursor-pointer">
-        MyBrand
-      </div>
+    <header
+        class="fixed top-0 left-0 w-full bg-white shadow-md transition-all duration-300 "
+    >
+        <div
+            class="mx-auto flex items-center justify-between px-4 py-3 max-w-7xl"
+        >
+            <!-- Logo -->
+            <a
+                href="#"
+                class="flex items-center text-3xl font-bold text-emerald-500"
+            >
+                <p class="text-emerald-600">বিক্র</p>য়ন
+            </a>
 
-      <!-- Desktop Menu -->
-      <nav class="hidden md:flex items-center space-x-6">
-        <a href="#" class="hover:text-indigo-600 transition">Home</a>
-        <a href="#" class="hover:text-indigo-600 transition">About</a>
-        <a href="#" class="hover:text-indigo-600 transition">Services</a>
-        <a href="#" class="hover:text-indigo-600 transition">Contact</a>
-        <button class="ml-4 px-4 py-2 bg-indigo-600 text-white rounded-full hover:bg-indigo-700 transition">
-          Get Started
-        </button>
-      </nav>
+            <!-- Desktop Menu -->
+            <nav class="hidden md:flex items-center space-x-6">
+                <a
+                    v-for="item in navItems"
+                    :key="item.name"
+                    :href="item.href"
+                    class="text-slate-600 font-semibold text-base transition-all duration-200 ease-in hover:text-green-500"
+                >
+                    {{ item.name }}
+                </a>
 
-      <!-- Mobile Menu Button -->
-      <button @click="toggleMenu" class="md:hidden focus:outline-none">
-        <svg v-if="!isMenuOpen" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none"
-          viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-            d="M4 6h16M4 12h16M4 18h16" />
-        </svg>
-        <svg v-else xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none"
-          viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-            d="M6 18L18 6M6 6l12 12" />
-        </svg>
-      </button>
-    </div>
+                <!-- Login Button -->
+                <a
+                    href="#"
+                    class="flex items-center gap-2 rounded-lg bg-green-500 px-4 py-2 text-sm font-semibold text-white transition-all duration-200 ease-in hover:bg-green-600 active:scale-95"
+                >
+                    <p>লগইন করুন</p>
+                    <Icon icon="material-symbols:login-rounded" class="h-5 w-5" />
+                </a>
+            </nav>
 
-    <!-- Mobile Menu -->
-    <transition name="slide">
-      <div ref="mobileMenu" v-if="isMenuOpen" class="md:hidden bg-white shadow-lg">
-        <div ref="menuItems" class="flex flex-col items-center space-y-4 py-4">
-          <a href="#" class="menu-item hover:text-indigo-600 transition">Home</a>
-          <a href="#" class="menu-item hover:text-indigo-600 transition">About</a>
-          <a href="#" class="menu-item hover:text-indigo-600 transition">Services</a>
-          <a href="#" class="menu-item hover:text-indigo-600 transition">Contact</a>
-          <button class="menu-item mt-2 px-4 py-2 bg-indigo-600 text-white rounded-full hover:bg-indigo-700 transition">
-            Get Started
-          </button>
+            <!-- Mobile Toggle -->
+            <button
+                @click="toggleMenu"
+                class="md:hidden focus:outline-none text-gray-700"
+            >
+                <Icon
+                    v-if="!isMenuOpen"
+                    icon="heroicons-outline:menu"
+                    class="h-7 w-7"
+                />
+                <Icon
+                    v-else
+                    icon="heroicons-outline:x"
+                    class="h-7 w-7"
+                />
+            </button>
         </div>
-      </div>
-    </transition>
-  </header>
+
+        <!-- Mobile Menu -->
+        <transition name="slide">
+            <div
+                v-if="isMenuOpen"
+                ref="mobileMenu"
+                class="md:hidden bg-white border-t border-gray-100 shadow-lg"
+            >
+                <div
+                    ref="menuItems"
+                    class="flex flex-col items-center py-5 space-y-4"
+                >
+                    <a
+                        v-for="item in navItems"
+                        :key="item.name"
+                        :href="item.href"
+                        class="menu-item text-slate-600 font-semibold text-base transition-all duration-200 ease-in hover:text-green-500 hover:-translate-y-[1px]"
+                    >
+                        {{ item.name }}
+                    </a>
+
+                    <button
+                        class="menu-item rounded-lg bg-green-500 px-6 py-2 text-white font-semibold hover:bg-green-600 active:scale-95 transition-all duration-200"
+                    >
+                        লগইন করুন
+                    </button>
+                </div>
+            </div>
+        </transition>
+    </header>
 </template>
 
 <script setup>
-import { ref, watch, nextTick } from 'vue'
-import { gsap } from 'gsap'
+import { Icon } from '@iconify/vue';
+import { gsap } from 'gsap';
+import { ref, watch, nextTick } from 'vue';
 
-const isMenuOpen = ref(false)
-const mobileMenu = ref(null)
-const menuItems = ref(null)
+// Dynamic nav items
+const navItems = [
+    { name: 'পরিচিতি', href: '#intro' },
+    { name: 'পার্থক্য', href: '#difference' },
+    { name: 'ফিচারস', href: '#features' },
+    { name: 'রিভিউ', href: '#reviews' },
+    { name: 'জিজ্ঞাসা', href: '#faq' },
+    { name: 'গ্যালারী', href: '#gallery' },
+    { name: 'যোগাযোগ', href: '#contact' },
+];
+
+const isMenuOpen = ref(false);
+const menuItems = ref(null);
 
 const toggleMenu = () => {
-  isMenuOpen.value = !isMenuOpen.value
-}
+    isMenuOpen.value = !isMenuOpen.value;
+};
 
-// Animate menu items with staggered GSAP effect
-watch(isMenuOpen, async (newVal) => {
-  if (newVal) {
-    await nextTick() // Wait for DOM to render
-    const items = menuItems.value.querySelectorAll('.menu-item')
-
-    // Fade and slide in each item with staggered delay
-    gsap.fromTo(
-      items,
-      { opacity: 0, y: -20 },
-      {
-        opacity: 1,
-        y: 0,
-        duration: 0.5,
-        ease: 'power3.out',
-        stagger: 0.1, // delay between each item
-      }
-    )
-  }
-})
+// GSAP animation for smooth open/close
+watch(isMenuOpen, async (open) => {
+    if (open) {
+        await nextTick();
+        const items = menuItems.value.querySelectorAll('.menu-item');
+        gsap.fromTo(
+            items,
+            { opacity: 0, y: -10 },
+            {
+                opacity: 1,
+                y: 0,
+                duration: 0.4,
+                ease: 'power2.out',
+                stagger: 0.07,
+            },
+        );
+    } else {
+        const items = menuItems.value?.querySelectorAll('.menu-item');
+        if (items) {
+            gsap.to(items, {
+                opacity: 0,
+                y: -8,
+                duration: 0.25,
+                ease: 'power1.in',
+                stagger: 0.05,
+            });
+        }
+    }
+});
 </script>
 
 <style scoped>
+/* Mobile slide transition */
 .slide-enter-active,
 .slide-leave-active {
-  transition: all 0.3s ease;
+    transition: all 0.3s ease-in-out;
 }
 .slide-enter-from,
 .slide-leave-to {
-  opacity: 0;
-  transform: translateY(-10px);
+    opacity: 0;
+    transform: translateY(-0.75rem);
 }
+
 </style>
