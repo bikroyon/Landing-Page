@@ -44,7 +44,6 @@ class OrderController extends Controller
         $order->update([
             'status' => $request->status
         ]);
-        event(new \App\Events\OrderStatusUpdated($order, $oldStatus, $order->status));
 
         return back();
     }

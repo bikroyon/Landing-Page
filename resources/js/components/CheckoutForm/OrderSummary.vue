@@ -82,26 +82,23 @@
         </div>
 
         <div
-            class="mb-1 flex justify-between border-b-2 border-dashed border-gray-200"
-            v-if="deliveryFee"
-        >
-            <span>ডেলিভারি চার্জ</span>
-            <span>{{ deliveryFee.toFixed(2) }} ৳</span>
-        </div>
-        <div
-            v-if="codCharge"
+            v-if="
+                selectedPaymentMethod?.extra_charge_cod_percentage &&
+                itemsWithDetails.length
+            "
             class="mb-1 flex justify-between border-b-2 border-dashed border-gray-200 text-orange-600"
         >
-            <span>ক্যাশ অন ডেলিভারী চার্জ ১%</span>
+            <span>
+                ক্যাশ অন ডেলিভারী চার্জ
+                {{ selectedPaymentMethod.extra_charge_cod_percentage }}%
+            </span>
             <span>{{ codCharge.toFixed(2) }} ৳</span>
         </div>
-
-        <div
-            class="mb-1 flex justify-between border-b-2 border-dashed border-gray-200 text-green-600"
-            v-if="discount"
+        <div v-if="deliveryFee"
+            class="mb-1 flex justify-between border-b-2 border-dashed border-gray-200"
         >
-            <span>Discount</span>
-            <span>- {{ discount.toFixed(2) }} ৳</span>
+            <span> ডেলিভারি চার্জ</span>
+            <span>{{ deliveryFee.toFixed(2) }} ৳</span>
         </div>
 
         <div class="flex justify-between font-bold">
@@ -138,7 +135,10 @@ const props = defineProps<{
     }>;
     deliveryFee?: number;
     discount?: number;
-    paymentMethodCode?: string;
+    selectedPaymentMethod?: {
+        code: string;
+        extra_charge_cod_percentage?: string | number;
+    } | null;
 }>();
 
 const emits = defineEmits<{
@@ -170,9 +170,8 @@ watch(
     { deep: true, immediate: true },
 );
 
-// --- Compute items with product and variant info ---
-const itemsWithDetails = computed(() => {
-    return itemsState.map((item) => {
+const itemsWithDetails = computed(() =>
+    itemsState.map((item) => {
         const product = props.products.find((p) => p.id === item.product_id);
         const variant =
             item.variant_index !== null &&
@@ -189,30 +188,35 @@ const itemsWithDetails = computed(() => {
                 ? Number(variant.extra_price) * item.quantity
                 : 0,
         };
-    });
-});
+    }),
+);
 
-// --- Totals ---
 const subtotal = computed(() =>
     itemsWithDetails.value.reduce(
         (sum, item) => sum + item.baseTotal + item.extraTotal,
         0,
     ),
 );
-const codCharge = computed(() =>
-    props.paymentMethodCode === 'COD' ? subtotal.value * 0.01 : 0,
-);
-//TOtal
 
-const total = computed(() =>
-    Math.max(
-        0,
+// --- COD charge depends on selectedPaymentMethod passed from parent ---
+const codCharge = computed(() => {
+    const method = props.selectedPaymentMethod;
+    if (method && method.code.toLowerCase() === 'cod') {
+        const percent = Number(method.extra_charge_cod_percentage || 0);
+        return subtotal.value * (percent / 100);
+    }
+    return 0;
+});
+
+// --- Total including delivery, discount, COD ---
+const total = computed(
+    () =>
         subtotal.value +
-            (props.deliveryFee || 0) +
-            codCharge.value -
-            (props.discount || 0),
-    ),
+        (props.deliveryFee || 0) +
+        codCharge.value -
+        (props.discount || 0),
 );
+
 const deliveryFee = computed(() => props.deliveryFee || 0);
 const discount = props.discount || 0;
 

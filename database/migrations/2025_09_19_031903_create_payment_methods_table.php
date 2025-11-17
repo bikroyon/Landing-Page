@@ -16,6 +16,7 @@ return new class extends Migration {
             $table->string('account_number')->nullable(); // Merchant/Agent number
             $table->string('qr_code')->nullable();    // Path or URL of QR code image
             $table->boolean('status')->default(true);
+            $table->string('extra_charge_cod_percentage')->nullable();
             $table->timestamps();
         });
     }

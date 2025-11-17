@@ -8,8 +8,8 @@
         </h2>
         <div class="flex flex-col gap-2">
             <!-- Name -->
-            <div>
-                <label class="text-sm font-semibold text-gray-500" v-if="label"
+            <div v-if="nameStatus">
+                <label class="text-sm font-semibold text-gray-500" v-if="customerInfoLabel"
                     >{{ nameLabel }} *</label
                 >
                 <input
@@ -27,8 +27,8 @@
             </div>
 
             <!-- Phone -->
-            <div>
-                <label class="text-sm font-semibold text-gray-500" v-if="label"
+            <div v-if="phoneStatus">
+                <label class="text-sm font-semibold text-gray-500" v-if="customerInfoLabel"
                     >{{ phoneLabel }} *</label
                 >
                 <input
@@ -46,11 +46,11 @@
             </div>
 
             <!-- Email -->
-            <div>
+            <div v-if="emailStatus">
                 <label
                     class="text-sm font-semibold text-gray-500"
-                    v-if="label"
-                    >{{ emailLabel || 'Email' }}</label
+                    v-if="customerInfoLabel"
+                    >{{ emailLabel || 'Email' }} label</label
                 >
                 <input
                     v-model="form.customer_email"
@@ -67,8 +67,8 @@
             </div>
 
             <!-- Address -->
-            <div>
-                <label class="text-sm font-semibold text-gray-500" v-if="label"
+            <div v-if="addressStatus">
+                <label class="text-sm font-semibold text-gray-500" v-if="customerInfoLabel"
                     >{{ addressLabel }} *</label
                 >
                 <textarea
@@ -84,6 +84,7 @@
                     {{ errors.customer_address }}
                 </p>
             </div>
+    
         </div>
     </div>
 </template>
@@ -92,8 +93,12 @@
 import { defineProps } from 'vue';
 
 const props = defineProps({
-    label: Boolean,
+    customerInfoLabel: Boolean,
     nameLabel: String,
+    nameStatus: Boolean,
+    emailStatus: Boolean,
+    phoneStatus: Boolean,
+    addressStatus: Boolean,
     emailLabel: String,
     phoneLabel: String,
     addressLabel: String,

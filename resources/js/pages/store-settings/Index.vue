@@ -139,13 +139,21 @@
                     </h2>
                     <div class="mt-4 grid grid-cols-1 gap-3 md:grid-cols-2">
                         <!-- COD -->
-                        <label class="flex items-center space-x-2">
-                            <ToggleSwitch
-                                :label="false"
-                                v-model="form.enable_cod"
-                            />
-                            <span>Cash on Delivery</span>
-                        </label>
+                        <div>
+                            <label class="flex items-center space-x-2">
+                                <ToggleSwitch
+                                    :label="false"
+                                    v-model="form.enable_cod"
+                                />
+                                <span>Cash on Delivery</span>
+                            </label>
+                            <div v-if="form.enable_cod">
+                                <label for="extra_cod"
+                                    >Extra Charge For COD <b>(%)</b></label
+                                >
+                                <Input type="text" v-model="form.extra_charge_cod_percentage" />
+                            </div>
+                        </div>
 
                         <!-- Bkash -->
                         <div>
@@ -238,105 +246,199 @@
 
                 <!-- ✅ Section Titles -->
                 <TabsContent value="Section Titles">
-                    <div class="mt-6 grid grid-cols-1 gap-4 md:grid-cols-2">
-                        <label for="products_title">Products Title</label>
-                        <Input
-                            id="products_title"
-                            v-model="form.products_title"
-                        />
+                    <div class="flex flex-col gap-4">
+                        <div>
+                            <h2 class="font-semibold text-gray-700">
+                                Section Titles
+                            </h2>
+                            <div class="flex flex-row gap-4">
+                                <div class="w-full">
+                                    <label for="products_title"
+                                        >Products Title</label
+                                    >
+                                    <Input
+                                        id="products_title"
+                                        v-model="form.products_title"
+                                    />
+                                </div>
+                                <div class="w-full">
+                                    <label for="customer_info_title"
+                                        >Customer Info Title</label
+                                    >
+                                    <Input
+                                        id="customer_info_title"
+                                        v-model="form.customer_info_title"
+                                    />
+                                </div>
+                            </div>
+                            <div class="flex flex-row gap-4">
+                                <div class="w-full">
+                                    <label for="delivery_zone_title"
+                                        >Delivery Zone Title</label
+                                    >
+                                    <Input
+                                        id="delivery_zone_title"
+                                        v-model="form.delivery_zone_title"
+                                    />
+                                </div>
+                                <div class="w-full">
+                                    <label for="additional_note_title"
+                                        >Additional Note Title</label
+                                    >
+                                    <Input
+                                        id="additional_note_title"
+                                        v-model="form.additional_note_title"
+                                    />
+                                </div>
+                            </div>
+                            <div class="flex flex-row gap-4">
+                                <div class="w-full">
+                                    <label for="order_summary_title"
+                                        >Order Summary Title</label
+                                    >
+                                    <Input
+                                        id="order_summary_title"
+                                        v-model="form.order_summary_title"
+                                    />
+                                </div>
+                                <div class="w-full">
+                                    <label for="payment_title"
+                                        >Payment Title</label
+                                    >
+                                    <Input
+                                        id="payment_title"
+                                        v-model="form.payment_title"
+                                    />
+                                </div>
+                            </div>
+                        </div>
+                        <div>
+                            <h2 class="font-semibold text-gray-700">
+                                Active Fields
+                            </h2>
+                            <div class="flex flex-row gap-4">
+                                <div>
+                                    <h3>Name</h3>
+                                    <ToggleSwitch
+                                        :label="false"
+                                        v-model="form.customer_info_name_status"
+                                    />
+                                </div>
+                                <div>
+                                    <h3>Mobile Number</h3>
+                                    <ToggleSwitch
+                                        :label="false"
+                                        v-model="
+                                            form.customer_info_phone_status
+                                        "
+                                    />
+                                </div>
+                                <div>
+                                    <h3>E-mail</h3>
+                                    <ToggleSwitch
+                                        :label="false"
+                                        v-model="
+                                            form.customer_info_email_status
+                                        "
+                                    />
+                                </div>
+                                <div>
+                                    <h3>Address</h3>
+                                    <ToggleSwitch
+                                        :label="false"
+                                        v-model="
+                                            form.customer_info_address_status
+                                        "
+                                    />
+                                </div>
+                                <div>
+                                    <h3>Additional Note</h3>
+                                    <ToggleSwitch
+                                        :label="false"
+                                        v-model="form.additional_note_status"
+                                    />
+                                </div>
+                            </div>
+                        </div>
+                        <div>
+                            <div>
+                                <label
+                                    for="customer_info_label"
+                                    class="font-semibold text-gray-700"
+                                    >Customer Info Label</label
+                                >
+                                <ToggleSwitch
+                                    :label="false"
+                                    v-model="form.customer_info_label"
+                                />
+                            </div>
+                            <div class="flex flex-row gap-4">
+                                <div class="w-full">
+                                    <label
+                                        for="customer_info_name"
+                                        v-if="form.customer_info_label"
+                                        >Customer Name Label</label
+                                    >
+                                    <Input
+                                        v-if="form.customer_info_label"
+                                        id="customer_info_name_label"
+                                        v-model="form.customer_info_name_label"
+                                    />
+                                </div>
+                                <div class="w-full">
+                                    <label
+                                        v-if="form.customer_info_label"
+                                        for="customer_info_phone"
+                                        >Customer Phone Label</label
+                                    >
+                                    <Input
+                                        v-if="form.customer_info_label"
+                                        id="customer_info_phone"
+                                        v-model="form.customer_info_phone_label"
+                                    />
+                                </div>
+                            </div>
+                            <div class="flex flex-row gap-4">
+                                <div class="w-full">
+                                    <label
+                                        v-if="form.customer_info_label"
+                                        for="customer_info_email_label"
+                                        >Customer Email Label</label
+                                    >
+                                    <Input
+                                        v-if="form.customer_info_label"
+                                        id="customer_info_email_label"
+                                        v-model="form.customer_info_email_label"
+                                    />
+                                </div>
+                                <div class="w-full">
+                                    <label
+                                        v-if="form.customer_info_label"
+                                        for="customer_info_address_label"
+                                        >Customer Address Label</label
+                                    >
+                                    <Input
+                                        v-if="form.customer_info_label"
+                                        id="customer_info_address_label"
+                                        v-model="
+                                            form.customer_info_address_label
+                                        "
+                                    />
+                                </div>
+                            </div>
+                        </div>
 
-                        <label for="customer_info_title"
-                            >Customer Info Title</label
-                        >
-                        <Input
-                            id="customer_info_title"
-                            v-model="form.customer_info_title"
-                        />
-                        <label for="customer_info_label"
-                            >Customer Info Label Enable/Disable</label
-                        >
-                        <ToggleSwitch
-                            :label="false"
-                            v-model="form.customer_info_label"
-                        />
-
-                        <label
-                            for="customer_info_name"
-                            v-if="form.customer_info_label"
-                            >Customer Name Label</label
-                        >
-                        <Input
-                            v-if="form.customer_info_label"
-                            id="customer_info_name_label"
-                            v-model="form.customer_info_name_label"
-                        />
-
-                        <label
-                            v-if="form.customer_info_label"
-                            for="customer_info_phone"
-                            >Customer Phone Label</label
-                        >
-                        <Input
-                            v-if="form.customer_info_label"
-                            id="customer_info_phone"
-                            v-model="form.customer_info_phone_label"
-                        />
-                        <label
-                            v-if="form.customer_info_label"
-                            for="customer_info_email_label"
-                            >Customer Email Label</label
-                        >
-                        <Input
-                            v-if="form.customer_info_label"
-                            id="customer_info_email_label"
-                            v-model="form.customer_info_email_label"
-                        />
-                        <label
-                            v-if="form.customer_info_label"
-                            for="customer_info_address_label"
-                            >Customer Address Label</label
-                        >
-                        <Input
-                            v-if="form.customer_info_label"
-                            id="customer_info_address_label"
-                            v-model="form.customer_info_address_label"
-                        />
-
-                        <label for="delivery_zone_title"
-                            >Delivery Zone Title</label
-                        >
-                        <Input
-                            id="delivery_zone_title"
-                            v-model="form.delivery_zone_title"
-                        />
-
-                        <label for="additional_note_title"
-                            >Additional Note Title</label
-                        >
-                        <Input
-                            id="additional_note_title"
-                            v-model="form.additional_note_title"
-                        />
-
-                        <label for="order_summary_title"
-                            >Order Summary Title</label
-                        >
-                        <Input
-                            id="order_summary_title"
-                            v-model="form.order_summary_title"
-                        />
-
-                        <label for="payment_title">Payment Title</label>
-                        <Input
-                            id="payment_title"
-                            v-model="form.payment_title"
-                        />
-
-                        <label for="submit_button">Submit Button Text</label>
-                        <Input
-                            id="submit_button"
-                            v-model="form.submit_button"
-                        />
+                        <div>
+                            <label
+                                for="submit_button"
+                                class="font-semibold text-gray-700"
+                                >Submit Button Text</label
+                            >
+                            <Input
+                                id="submit_button"
+                                v-model="form.submit_button"
+                            />
+                        </div>
                     </div>
                 </TabsContent>
 
@@ -446,16 +548,16 @@
 </template>
 
 <script setup lang="ts">
-import Input from '@/components/ui/input/Input.vue';
-import AppLayout from '@/layouts/AppLayout.vue';
-import { useForm, usePage } from '@inertiajs/vue3';
-import { ref, watch } from 'vue';
 import ImageUploader from '@/components/ImageUploader.vue';
 import ToggleSwitch from '@/components/ToggleSwitch.vue';
 import Button from '@/components/ui/button/Button.vue';
+import Input from '@/components/ui/input/Input.vue';
 import { useToast } from '@/composables/useToast';
+import AppLayout from '@/layouts/AppLayout.vue';
 import { Icon } from '@iconify/vue';
+import { useForm, usePage } from '@inertiajs/vue3';
 import { TabsContent, TabsList, TabsRoot, TabsTrigger } from 'reka-ui';
+import { ref, watch } from 'vue';
 const { showToast } = useToast();
 // ✅ Tabs list
 const tabs = [
@@ -492,7 +594,7 @@ const form = useForm({
     postal_code: setting.postal_code || '',
     currency: setting.currency || 'BDT',
     currency_symbol: setting.currency_symbol || '৳',
-    maintenance_mode: setting.maintenance_mode || false,
+    maintenance_mode: setting.maintenance_mode ? 1 : 0,
     facebook_url: setting.facebook_url || '',
     tiktok_url: setting.tiktok_url || '',
     instagram_url: setting.instagram_url || '',
@@ -500,17 +602,18 @@ const form = useForm({
     youtube_url: setting.youtube_url || '',
 
     // ✅ Payments
-    enable_cod: setting.cod_method?.status ?? true,
+    enable_cod: setting.cod_method?.status ? 1 : 0,
+    extra_charge_cod_percentage: setting.cod_method?.extra_charge_cod_percentage,
 
-    enable_bkash: setting.bkash_method?.status ?? false,
+    enable_bkash: setting.bkash_method?.status ? 1 : 0,
     bkash_account_number: setting.bkash_method?.account_number || '',
     bkash_qr_code: setting.bkash_method?.qr_code || '',
 
-    enable_nagad: setting.nagad_method?.status ?? false,
+    enable_nagad: setting.nagad_method?.status ? 1 : 0,
     nagad_account_number: setting.nagad_method?.account_number || '',
     nagad_qr_code: setting.nagad_method?.qr_code || '',
 
-    enable_rocket: setting.rocket_method?.status ?? false,
+    enable_rocket: setting.rocket_method?.status ? 1 : 0,
     rocket_account_number: setting.rocket_method?.account_number || '',
     rocket_qr_code: setting.rocket_method?.qr_code || '',
 
@@ -518,16 +621,21 @@ const form = useForm({
     meta_description: setting.meta_description || '',
     products_title: setting.products_title || 'Products',
     customer_info_title: setting.customer_info_title || 'Customer Information',
-    customer_info_label: setting.customer_info_label || false,
+    customer_info_label: setting.customer_info_label? 1 : 0,
     customer_info_name_label: setting.customer_info_name_label || 'Enter Name',
+customer_info_name_status: setting.customer_info_name_status ? 1 : 0,
     customer_info_phone_label:
         setting.customer_info_phone_label || 'Enter Phone',
+    customer_info_phone_status: setting.customer_info_phone_status ? 1 : 0,
     customer_info_email_label:
         setting.customer_info_email_label || 'Enter Email',
+    customer_info_email_status: setting.customer_info_email_status ? 1 : 0,
     customer_info_address_label:
         setting.customer_info_address_label || 'Enter Address',
+    customer_info_address_status: setting.customer_info_address_status ? 1 : 0,
     delivery_zone_title: setting.delivery_zone_title || 'Delivery Zone',
     additional_note_title: setting.additional_note_title || 'Additional Notes',
+    additional_note_status: setting.additional_note_status ? 1 : 0,
     order_summary_title: setting.order_summary_title || 'Order Summary',
     payment_title: setting.payment_title || 'Payment Method',
     submit_button: setting.submit_button || 'Place Order',
@@ -554,12 +662,7 @@ const form = useForm({
 function submit() {
     form.post('/store-settings/update', {
         onSuccess: () => {
-            showToast(
-                'ধন্যবাদ!',
-                'সেটিংস সফলভাবে আপডেট হয়েছে।',
-                'success',
-            );
-            form.reset();
+            showToast('ধন্যবাদ!', 'সেটিংস সফলভাবে আপডেট হয়েছে।', 'success');
         },
         onError: () => {
             showToast(
@@ -569,5 +672,6 @@ function submit() {
             );
         },
     });
+    console.log(form)
 }
 </script>

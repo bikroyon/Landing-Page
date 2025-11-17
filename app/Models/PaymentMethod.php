@@ -17,6 +17,7 @@ class PaymentMethod extends Model
         'account_number',
         'qr_code',
         'status',
+        'extra_charge_cod_percentage',
     ];
 
     public function orders()

@@ -15,7 +15,7 @@ class Review extends Model
         'order_id',
         'rating',
         'comment',
-         'is_published',
+        'is_published',
     ];
 
     // Relationships

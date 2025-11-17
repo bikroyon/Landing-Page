@@ -1,5 +1,5 @@
 <template>
-    <LandingPageLayout>
+    <LandingPageLayout :user="user">
         <LandingPageDesign />
         <div class="mx-auto max-w-7xl p-6">
             <div>
@@ -19,7 +19,11 @@
                         <!-- Customer Info -->
                         <CustomerInfo
                             :title="store_settings.customer_info_title"
-                            :label="store_settings.customer_info_label"
+                            :nameStatus="store_settings.customer_info_name_status"
+                            :emailStatus="store_settings.customer_info_email_status"
+                            :phoneStatus="store_settings.customer_info_phone_status"
+                            :addressStatus="store_settings.customer_info_address_status"
+                            :customerInfoLabel="store_settings.customer_info_label"
                             :nameLabel="store_settings.customer_info_name_label"
                             :emailLabel="
                                 store_settings.customer_info_email_label
@@ -44,13 +48,18 @@
                             :subtotal="subtotal"
                         />
 
-                        <div class="mt-4 flex flex-col">
-                            <label
-                                for="additional_note"
-                                class="mb-1 text-xl font-bold text-gray-600"
+                        <div
+                            v-if="store_settings.additional_note_status"
+                            class="mt-4 flex flex-col"
+                        >
+                            <h2
+                                class="mb-4 flex items-center gap-2 text-2xl font-extrabold text-gray-700"
                             >
+                                <span
+                                    class="h-6 w-1 rounded-full bg-green-500"
+                                ></span>
                                 {{ store_settings.additional_note_title }}
-                            </label>
+                            </h2>
                             <textarea
                                 name="additional_note"
                                 v-model="form.additional_note"
@@ -67,7 +76,7 @@
                             :products="products"
                             :deliveryFee="form.delivery_fee || 0"
                             :discount="discount"
-                            :paymentMethodCode="selectedPaymentCode"
+                            :selectedPaymentMethod="selectedPaymentMethod"
                         />
 
                         <!-- Payment Method -->
@@ -141,6 +150,7 @@ const props = defineProps<{
         email: string;
         phone: string;
         address: string;
+        image:string;
     } | null;
     settings?: Setting[];
     products?: Product[];
@@ -154,12 +164,10 @@ const store_settings = computed(() => props.settings || []);
 const products = computed(() => props.products || []);
 const deliveryZones = computed(() => props.deliveryZones || []);
 const paymentMethods = computed(() => props.paymentMethods || []);
-const selectedPaymentCode = computed(() => {
-  const method = paymentMethods.value.find(
-    (m) => m.id === form.payment_method_id
-  );
-  return method?.code || null;
-});
+const selectedPaymentMethod = computed(() =>
+    paymentMethods.value.find((m) => m.id === form.payment_method_id) || null
+);
+
 
 const form = useForm({
     customer_name: user?.name || '',

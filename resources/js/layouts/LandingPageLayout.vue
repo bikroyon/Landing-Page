@@ -7,7 +7,9 @@
 
   <div class="bg-white">
     <ToastContainer />
-    <LandingPageHeader />
+
+    <LandingPageHeader :user="props.user" />
+    
     <slot />
     <LandingPageFooter />
   </div>
@@ -18,7 +20,14 @@ import LandingPageFooter from '@/components/LandingPage/Footer.vue';
 import LandingPageHeader from '@/components/LandingPage/Header.vue';
 import ToastContainer from '@/components/ToastContainer.vue';
 import { Head, usePage } from '@inertiajs/vue3';
-
+const props = defineProps<{
+    user?: {
+        name: string;
+        email: string;
+        phone: string;
+        image: string;
+    } | null;
+}>();
 const page = usePage();
 const settings = page.props.settings;
 
