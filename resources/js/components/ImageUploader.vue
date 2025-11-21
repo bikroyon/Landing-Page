@@ -27,7 +27,7 @@
           :src="preview"
           class="h-full w-full object-cover transition duration-300 group-hover:blur-sm"
         />
-        <div v-else class="text-sm text-gray-500 text-center">
+        <div v-else class="text-xs text-gray-500 text-center">
           <Icon name="upload" class="w-6 h-6 opacity-55 mx-auto mb-1" />
           <p>Click or Drop Image</p>
         </div>

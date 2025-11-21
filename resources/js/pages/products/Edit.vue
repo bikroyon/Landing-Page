@@ -2,19 +2,19 @@
   <AppLayout :breadcrumbs="breadcrumbs">
     <Head title="Edit Product" />
 
-    <div class="p-6">
-      <div class="mb-4 flex items-center justify-between">
+    <div class="p-4 sm:p-6">
+      <!-- Header -->
+      <div class="mb-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
         <h1 class="text-2xl font-bold">Edit Product</h1>
-        <Button @click="submit" :disabled="form.processing">
+        <Button @click="submit" :disabled="form.processing" class="w-full sm:w-auto">
           Update
         </Button>
       </div>
 
-      <form @submit.prevent="submit">
+      <form @submit.prevent="submit" class="space-y-6">
         <div class="grid grid-cols-1 gap-6 md:grid-cols-3">
-          <!-- Left -->
+          <!-- Left Section -->
           <div class="space-y-4 md:col-span-2">
-
             <!-- Name -->
             <div>
               <label class="mb-1 block font-medium">Name</label>
@@ -29,9 +29,9 @@
               </div>
             </div>
 
-            <!-- Price + Prev Price + Status -->
-            <div class="flex items-center justify-between gap-2">
-              <div class="w-full">
+            <!-- Price + Prev Price + Cost Price + Status -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 items-end">
+              <div>
                 <label class="mb-1 block font-medium">Price</label>
                 <Input
                   v-model="form.price"
@@ -41,10 +41,20 @@
                 />
               </div>
 
-              <div class="w-full">
+              <div>
                 <label class="mb-1 block font-medium">Previous Price</label>
                 <Input
                   v-model="form.prev_price"
+                  type="number"
+                  step="0.01"
+                  class="w-full rounded border p-2"
+                />
+              </div>
+
+              <div>
+                <label class="mb-1 block font-medium">Cost Price</label>
+                <Input
+                  v-model="form.cost_price"
                   type="number"
                   step="0.01"
                   class="w-full rounded border p-2"
@@ -61,18 +71,18 @@
             <PriceVariations v-model:variations="form.variations" />
           </div>
 
-          <!-- Right: Image -->
-          <div class="flex items-center justify-center">
+          <!-- Right Section: Image -->
+          <div class="flex justify-center md:justify-start">
             <ImageUploader
               v-model="form.image"
               :existing-url="product.image ? `/${product.image}` : null"
-              class="w-full"
+              class="w-full max-w-xs"
             />
           </div>
         </div>
 
         <!-- Description -->
-        <div class="mt-4">
+        <div>
           <label class="mb-1 block font-medium">Description</label>
           <textarea
             v-model="form.description"
@@ -84,6 +94,7 @@
     </div>
   </AppLayout>
 </template>
+
 
 
 <script setup lang="ts">
@@ -111,6 +122,8 @@ const form = useForm({
   name: product.name || "",
   description: product.description || "",
   price: product.price || "",
+  prev_price: product.prev_price || "",
+  cost_price: product.cost_price || "",
   image: "", // file will be uploaded if selected
   status: product.status ?? true,
   variations: product.variations || [],
@@ -121,6 +134,8 @@ function submit() {
   formData.append("name", form.name);
   formData.append("description", form.description);
   formData.append("price", form.price || 0);
+  formData.append("price", form.prev_price || 0);
+  formData.append("price", form.cost_price || 0);
   formData.append("status", form.status ? 1 : 0);
   formData.append("variations", JSON.stringify(form.variations));
 

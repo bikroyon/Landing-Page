@@ -17,6 +17,7 @@ return new class extends Migration
             $table->text('description')->nullable();
             $table->decimal('price', 10, 2)->default(0);
             $table->decimal('prev_price', 10, 2)->default(0);
+            $table->decimal('cost_price', 10, 2)->default(0);
             $table->string('image')->nullable();
             $table->boolean('status')->default(true);
             $table->json('variations')->nullable(); // for size/color, etc.

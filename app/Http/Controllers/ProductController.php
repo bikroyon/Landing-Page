@@ -2,20 +2,28 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\AccessHelper;
 use App\Models\Product;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
 class ProductController extends Controller
 {
+
     public function index(Request $request)
     {
+        if (!AccessHelper::hasAccess('products', 'view')) {
+            abort(403, 'Unauthorized');
+        }
+
         $search = $request->input('search');
 
         $products = Product::query()
             ->when($search, function ($query, $search) {
-                $query->where('name', 'like', "%{$search}%")
-                    ->orWhere('description', 'like', "%{$search}%");
+                $query->where(function ($q) use ($search) {
+                    $q->where('name', 'like', "%{$search}%")
+                        ->orWhere('description', 'like', "%{$search}%");
+                });
             })
             ->orderBy('id', 'asc')
             ->paginate(10)
@@ -27,18 +35,31 @@ class ProductController extends Controller
         ]);
     }
 
+    public function show(Product $product)
+    {
+        // If you don't need it, you can just return abort
+        abort(404);
+    }
+
     public function create()
     {
+        if (!AccessHelper::hasAccess('products', 'create')) {
+            abort(403, 'Unauthorized');
+        }
         return Inertia::render('products/Create');
     }
 
     public function store(Request $request)
     {
+        if (!AccessHelper::hasAccess('products', 'create')) {
+            abort(403, 'Unauthorized');
+        }
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
             'price' => 'nullable|numeric',
             'prev_price' => 'nullable|numeric',
+            'cost_price' => 'nullable|numeric',
             'status' => 'boolean',
             'variations' => 'nullable|string',
             'image' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
@@ -73,10 +94,11 @@ class ProductController extends Controller
         return redirect()->route('products.index')->with('success', 'Product created successfully!');
     }
 
-
-
     public function edit(Product $product)
     {
+        if (!AccessHelper::hasAccess('products', 'edit')) {
+            abort(403, 'Unauthorized');
+        }
         return Inertia::render('products/Edit', [
             'product' => $product,
         ]);
@@ -84,11 +106,15 @@ class ProductController extends Controller
 
     public function update(Request $request, Product $product)
     {
+        if (!AccessHelper::hasAccess('products', 'edit')) {
+            abort(403, 'Unauthorized');
+        }
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
             'price' => 'nullable|numeric',
             'prev_price' => 'nullable|numeric',
+            'cost_price' => 'nullable|numeric',
             'status' => 'boolean',
             'variations' => 'nullable|string',
             'image' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
@@ -138,10 +164,11 @@ class ProductController extends Controller
         return redirect()->route('products.index')->with('success', 'Product updated successfully!');
     }
 
-
-
     public function destroy(Product $product)
     {
+        if (!AccessHelper::hasAccess('products', 'delete')) {
+            abort(403, 'Unauthorized');
+        }
         // Delete main image
         if ($product->image && file_exists(public_path($product->image))) {
             @unlink(public_path($product->image));
@@ -156,6 +183,6 @@ class ProductController extends Controller
 
         $product->delete();
 
-        return redirect()->route('products.index')->with('success', 'Product deleted successfully!');
+        return back()->with('success', 'Product deleted!');
     }
 }

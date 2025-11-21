@@ -14,7 +14,7 @@ class CustomerController extends Controller
      */
     public function index(Request $request)
     {
-                if (!AccessHelper::hasAccess('customers', 'view')) {
+        if (!AccessHelper::hasAccess('customers', 'view')) {
             abort(403, 'Unauthorized');
         }
         $query = User::where('role_id', 2); // Only customers
@@ -22,8 +22,8 @@ class CustomerController extends Controller
         if ($request->search) {
             $query->where(function ($q) use ($request) {
                 $q->where('name', 'like', "%{$request->search}%")
-                  ->orWhere('email', 'like', "%{$request->search}%")
-                  ->orWhere('phone', 'like', "%{$request->search}%");
+                    ->orWhere('email', 'like', "%{$request->search}%")
+                    ->orWhere('phone', 'like', "%{$request->search}%");
             });
         }
 

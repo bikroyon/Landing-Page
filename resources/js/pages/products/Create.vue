@@ -2,18 +2,20 @@
     <AppLayout :breadcrumbs="breadcrumbs">
         <Head title="Add Product" />
 
-        <div class="p-6">
-            <div class="mb-4 flex items-center justify-between">
+        <div class="p-4 sm:p-6">
+            <!-- Header -->
+            <div class="mb-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                 <h1 class="text-2xl font-bold">Create Product</h1>
-                <Button @click="submit" :disabled="form.processing"
-                    >Save <Icon icon="ic:round-save"/> </Button
-                >
+                <Button @click="submit" :disabled="form.processing" class="w-full sm:w-auto">
+                    Save <Icon icon="ic:round-save" class="ml-1"/>
+                </Button>
             </div>
 
-            <form @submit.prevent="submit" class="">
+            <form @submit.prevent="submit" class="space-y-6">
                 <div class="grid grid-cols-1 gap-6 md:grid-cols-3">
                     <!-- Left -->
                     <div class="space-y-4 md:col-span-2">
+                        <!-- Product Name -->
                         <div>
                             <label class="mb-1 block font-medium">Name</label>
                             <Input
@@ -22,54 +24,42 @@
                                 required
                                 class="w-full rounded border p-2"
                             />
-                            <div
-                                v-if="form.errors.name"
-                                class="text-sm text-red-500"
-                            >
+                            <div v-if="form.errors.name" class="text-sm text-red-500">
                                 {{ form.errors.name }}
                             </div>
                         </div>
 
-                        <div class="flex items-center justify-between gap-2">
-                            <div class="w-full">
-                                <label class="mb-1 block font-medium"
-                                    >Price</label
-                                >
-                                <Input
-                                    v-model="form.price"
-                                    type="number"
-                                    step="0.01"
-                                    class="w-full rounded border p-2"
-                                />
-                            </div>
-                            <div class="w-full">
-                                <label class="mb-1 block font-medium"
-                                    >Previous Price</label
-                                >
-                                <Input
-                                    v-model="form.prev_price"
-                                    type="number"
-                                    step="0.01"
-                                    class="w-full rounded border p-2"
-                                />
+                        <!-- Prices & Status -->
+                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 items-end">
+                            <div>
+                                <label class="mb-1 block font-medium">Price</label>
+                                <Input v-model="form.price" type="number" step="0.01" class="w-full rounded border p-2" />
                             </div>
                             <div>
-                                <label class="mb-1 block font-medium"
-                                    >Status</label
-                                >
+                                <label class="mb-1 block font-medium">Previous Price</label>
+                                <Input v-model="form.prev_price" type="number" step="0.01" class="w-full rounded border p-2" />
+                            </div>
+                            <div>
+                                <label class="mb-1 block font-medium">Cost Price</label>
+                                <Input v-model="form.cost_price" type="number" step="0.01" class="w-full rounded border p-2" />
+                            </div>
+                            <div>
+                                <label class="mb-1 block font-medium">Status</label>
                                 <ToggleSwitch v-model="form.status" />
                             </div>
                         </div>
 
+                        <!-- Price Variations -->
                         <PriceVariations v-model:variations="form.variations" />
                     </div>
 
-                    <!-- Right: Image -->
-                    <div class="flex items-center justify-center">
-                        <ImageUploader v-model="form.image" class="w-full" />
+                    <!-- Right: Image Uploader -->
+                    <div class="flex justify-center md:justify-start">
+                        <ImageUploader v-model="form.image" class="w-full max-w-xs" />
                     </div>
                 </div>
 
+                <!-- Description -->
                 <div>
                     <label class="mb-1 block font-medium">Description</label>
                     <textarea
@@ -82,6 +72,7 @@
         </div>
     </AppLayout>
 </template>
+
 
 <script setup lang="ts">
 import ImageUploader from '@/components/ImageUploader.vue';
@@ -103,6 +94,7 @@ const form = useForm({
     description: '',
     price: '',
     prev_price: '',
+    cost_price: '',
     image: '',
     status: true,
     variations: [],
@@ -115,6 +107,7 @@ function submit() {
     formData.append('description', form.description);
     formData.append('price', form.price || 0);
     formData.append('price', form.prev_price || 0);
+    formData.append('price', form.cost_price || 0);
     formData.append('status', form.status ? 1 : 0);
 
     // Add variations JSON + images

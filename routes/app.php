@@ -27,7 +27,9 @@ Route::get('/pages/{slug}', [OthersPageController::class, 'showPublicPage'])
 
 // Authenticated routes
 Route::middleware(['auth'])->group(function () {
+    // Product Management
     Route::resource('products', ProductController::class);
+
 
     // Admin Orders Management
     Route::put('/orders/{order_number}/status', [OrderController::class, 'updateStatus'])

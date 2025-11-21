@@ -14,6 +14,7 @@ class Product extends Model
         'description',
         'price',
         'prev_price',
+        'cost_price',
         'status',
         'variations',
         'image',
