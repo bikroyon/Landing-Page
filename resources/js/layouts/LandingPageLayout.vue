@@ -9,9 +9,8 @@
     <ToastContainer />
 
     <LandingPageHeader :user="props.user" />
-    
     <slot />
-    <LandingPageFooter />
+    <LandingPageFooter :footer="props.footer" />
   </div>
 </template>
 
@@ -27,7 +26,10 @@ const props = defineProps<{
         phone: string;
         image: string;
     } | null;
+    footer: Object;
 }>();
+
+
 const page = usePage();
 const settings = page.props.settings;
 

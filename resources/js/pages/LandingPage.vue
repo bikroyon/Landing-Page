@@ -1,9 +1,9 @@
 <template>
-    <LandingPageLayout :user="user">
+    <LandingPageLayout :user="user" :footer="footer">
         <LandingPageDesign />
         <div class="mx-auto max-w-7xl p-6">
             <div>
-                <h2 class="mb-4 text-2xl font-bold text-gray-600">
+                <h2 class="mb-4 text-2xl text-center font-bold text-gray-600">
                     {{ store_settings.products_title }}
                 </h2>
             </div>
@@ -14,16 +14,26 @@
                     v-model:items="form.items"
                 />
 
-                <div class="flex flex-row justify-between gap-4">
+                <div class="flex flex-row justify-between gap-4 mx-20">
                     <div class="w-7/12">
                         <!-- Customer Info -->
                         <CustomerInfo
                             :title="store_settings.customer_info_title"
-                            :nameStatus="store_settings.customer_info_name_status"
-                            :emailStatus="store_settings.customer_info_email_status"
-                            :phoneStatus="store_settings.customer_info_phone_status"
-                            :addressStatus="store_settings.customer_info_address_status"
-                            :customerInfoLabel="store_settings.customer_info_label"
+                            :nameStatus="
+                                store_settings.customer_info_name_status
+                            "
+                            :emailStatus="
+                                store_settings.customer_info_email_status
+                            "
+                            :phoneStatus="
+                                store_settings.customer_info_phone_status
+                            "
+                            :addressStatus="
+                                store_settings.customer_info_address_status
+                            "
+                            :customerInfoLabel="
+                                store_settings.customer_info_label
+                            "
                             :nameLabel="store_settings.customer_info_name_label"
                             :emailLabel="
                                 store_settings.customer_info_email_label
@@ -85,7 +95,6 @@
                             :paymentMethods="paymentMethods"
                             :form="form"
                         />
-
                         <!-- Submit Button -->
                         <button
                             type="submit"
@@ -127,7 +136,7 @@ import LandingPageLayout from '@/layouts/LandingPageLayout.vue';
 import type { DeliveryZone, PaymentMethod, Product, Setting } from '@/types';
 import { Icon } from '@iconify/vue';
 import { useForm, usePage } from '@inertiajs/vue3';
-import { computed, onMounted, ref } from 'vue';
+import { computed, onMounted, reactive, ref } from 'vue';
 const { showToast } = useToast();
 
 onMounted(() => {
@@ -144,13 +153,14 @@ onMounted(() => {
 
 const page = usePage();
 const settings = page.props.settings;
+
 const props = defineProps<{
     user?: {
         name: string;
         email: string;
         phone: string;
         address: string;
-        image:string;
+        image: string;
     } | null;
     settings?: Setting[];
     products?: Product[];
@@ -164,9 +174,25 @@ const store_settings = computed(() => props.settings || []);
 const products = computed(() => props.products || []);
 const deliveryZones = computed(() => props.deliveryZones || []);
 const paymentMethods = computed(() => props.paymentMethods || []);
-const selectedPaymentMethod = computed(() =>
-    paymentMethods.value.find((m) => m.id === form.payment_method_id) || null
+const selectedPaymentMethod = computed(
+    () =>
+        paymentMethods.value.find((m) => m.id === form.payment_method_id) ||
+        null,
 );
+const footer = reactive({
+    name: store_settings.value.store_name || '',
+    location: store_settings.value.address || '',
+    phone: store_settings.value.phone || '',
+    email: store_settings.value.email || '',
+    description: store_settings.value.store_description || '',
+    whatsapp_url: store_settings.value.whatsapp || '',
+    messenger_url: store_settings.value.messenger || '',
+    facebook_url: store_settings.value.facebook_url || '',
+    twitter_url: store_settings.value.twitter_url || '',
+    instagram_url: store_settings.value.instagram_url || '',
+    tiktok_url: store_settings.value.tiktok_url || '',
+    youtube_url: store_settings.value.youtube_url || '',
+});
 
 
 const form = useForm({

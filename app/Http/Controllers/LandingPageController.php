@@ -204,7 +204,7 @@ class LandingPageController extends Controller
         $order = Order::with(['items.product', 'paymentMethod', 'deliveryZone'])
             ->where('order_number', $order_number)
             ->firstOrFail();
-
+        $settings = StoreSetting::first();
         $userExists = RegisteredUserController::customerExists(
             $order->customer_email ?? null,
             $order->customer_phone
@@ -247,6 +247,7 @@ class LandingPageController extends Controller
                 'note' => $order->note,
             ],
             'userExists' => $userExists,
+            'settings' => $settings,
         ]);
     }
 }

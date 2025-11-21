@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\OthersPage;
+use App\Models\StoreSetting;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
@@ -66,9 +68,11 @@ class OthersPageController extends Controller
     public function showPublicPage($slug)
     {
         $page = OthersPage::where('slug', $slug)->firstOrFail();
-
+        $settings = StoreSetting::first();
         return Inertia::render('pages/View', [
-            'page' => $page
+            'page' => $page,
+            'user' => Auth::user(),
+            'settings' => $settings,
         ]);
     }
 }

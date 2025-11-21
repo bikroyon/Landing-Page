@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\CustomerController;
+use App\Http\Controllers\CustomizationController;
 use App\Http\Controllers\DeliveryZoneController;
 use App\Http\Controllers\FraudCheckerController;
 use App\Http\Controllers\LandingPageController;
@@ -95,5 +96,4 @@ Route::middleware(['auth'])->group(function () {
     // Fraud Checker 
     Route::get('/fraud-checker', [FraudCheckerController::class, 'index'])->name('fraud.index');
     Route::post('/fraud-checker/search', [FraudCheckerController::class, 'search'])->name('fraud.search');
-    
 });

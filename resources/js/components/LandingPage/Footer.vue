@@ -2,7 +2,9 @@
     <footer class="bg-gray-900 text-gray-300">
         <!-- Help Section -->
         <div class="bg-white pb-10">
-            <div class="bg-teal-500 max-w-7xl mx-auto px-6 py-10 text-center rounded-4xl">
+            <div
+                class="max-w-7xl rounded-4xl bg-teal-500 px-6 mx-10 py-10 text-center"
+            >
                 <h2 class="mb-3 text-2xl font-bold text-gray-800">
                     সাহায্য প্রয়োজন?
                 </h2>
@@ -13,26 +15,24 @@
                 </p>
 
                 <div class="flex justify-center gap-4">
-                    <a
-                        href="tel:+8801753492987"
+                    <Link v-if="footer.phone"
+                        :href="`tel:${ footer.phone }`"
                         class="flex items-center gap-2 rounded-full bg-green-500 px-5 py-2 text-white transition hover:bg-green-600"
                     >
                         <i class="fas fa-phone"></i> কল করুন
-                    </a>
-                    <a
-                        href="https://wa.me/8801753492987"
-                        target="_blank"
-                        class="flex items-center gap-2 rounded-full bg-gray-200 px-5 py-2 text-gray-700 transition hover:bg-gray-300"
+                    </Link>
+                    <Link v-if="footer.messenger_url"
+                        :href="footer.messenger_url"
+                        class="flex items-center gap-2 rounded-full bg-green-500 px-5 py-2 text-white transition hover:bg-green-600"
                     >
-                        <i class="fab fa-whatsapp"></i> WhatsApp
-                    </a>
-                    <a
-                        href="https://facebook.com"
-                        target="_blank"
-                        class="flex items-center gap-2 rounded-full bg-gray-200 px-5 py-2 text-gray-700 transition hover:bg-gray-300"
+                        <i class="fas fa-phone"></i> কল করুন
+                    </Link>
+                    <Link v-if="footer.whatsapp_url"
+                         :href="footer.whatsapp_url"
+                        class="flex items-center gap-2 rounded-full bg-green-500 px-5 py-2 text-white transition hover:bg-green-600"
                     >
-                        <i class="fab fa-facebook-messenger"></i> Messenger
-                    </a>
+                        <i class="fas fa-phone"></i> কল করুন
+                    </Link>
                 </div>
             </div>
         </div>
@@ -47,58 +47,91 @@
                     ইকোইটস
                 </h3>
                 <p class="text-sm leading-relaxed">
-                    ইকোইটস হচ্ছে বাংলাদেশের দক্ষিণাঞ্চলের সর্বাধিক জনপ্রিয়
-                    খাদ্য ডেলিভারি সেবা। অনলাইন অর্ডার করতে আমাদের ইকোইটস মোবাইল
-                    অ্যাপ বা ওয়েবসাইট ব্যবহার করুন।
+                    {{ footer.description }}
                 </p>
+            </div>
+            <!-- Social Media -->
+            <div>
+                <h3 class="mb-3 text-lg font-semibold text-white">
+                    দ্রুত লিঙ্কসমূহ
+                </h3>
+                <ul class="space-y-2 text-sm">
+                    <li>
+                        <Link
+                            href="/pages/privacy-policy"
+                            class="transition hover:text-green-400"
+                            >গোপনীয়তা নীতি</Link
+                        >
+                    </li>
+                    <li>
+                        <Link
+                            href="/pages/terms-and-conditions"
+                            class="transition hover:text-green-400"
+                            >অ্যাপ ব্যবহারের শর্তাবলী</Link
+                        >
+                    </li>
+                    <li>
+                        <Link
+                            href="/pages/return-and-refund-policy"
+                            class="transition hover:text-green-400"
+                            >রিটার্ন ও রিফান্ড নীতি</Link
+                        >
+                    </li>
+                </ul>
+
             </div>
 
             <!-- Contact Info -->
             <div>
                 <h3 class="mb-3 text-lg font-semibold text-white">
-                    যোগাযোগ ঠিকানা
+                    যোগাযোগ & সামাজিক মাধ্যম
                 </h3>
                 <ul class="space-y-2 text-sm">
-                    <li>📍 সোনাডাঙ্গা, খুলনা ৯০০০</li>
-                    <li>📧 ecoeats.bd@gmail.com</li>
-                    <li>📞 +8801753492987</li>
+                    <li>📍 {{ footer.location }}</li>
+                    <li>📧 {{ footer.email }}</li>
+                    <li>📞 {{ footer.phone }}</li>
                 </ul>
-            </div>
-
-            <!-- Social Media -->
-            <div>
-                <h3 class="mb-3 text-lg font-semibold text-white">
-                    সামাজিক মাধ্যম
-                </h3>
                 <div class="flex space-x-4 text-lg">
-                    <a
-                        href="#"
+                    <Link
+                        v-if="footer.facebook_url"
+                        :href="footer.facebook_url"
                         target="_blank"
                         class="transition hover:text-green-400"
                     >
-                        <i class="fab fa-facebook-f"></i>
-                    </a>
-                    <a
-                        href="#"
+                        <Icon icon="ic:baseline-facebook" />
+                    </Link>
+                    <Link
+                        v-if="footer.instagram_url"
+                        :href="footer.instagram_url"
                         target="_blank"
                         class="transition hover:text-green-400"
                     >
-                        <i class="fab fa-instagram"></i>
-                    </a>
-                    <a
-                        href="#"
+                        <Icon icon="mdi:instagram" />
+                    </Link>
+                    <Link
+                        v-if="footer.tiktok_url"
+                        :href="footer.tiktok_url"
                         target="_blank"
                         class="transition hover:text-green-400"
                     >
-                        <i class="fab fa-whatsapp"></i>
-                    </a>
-                    <a
-                        href="#"
+                        <Icon icon="streamline-flex:tiktok-logo-remix" />
+                    </Link>
+                    <Link
+                        v-if="footer.twitter_url"
+                        :href="footer.twitter_url"
                         target="_blank"
                         class="transition hover:text-green-400"
                     >
-                        <i class="fas fa-envelope"></i>
-                    </a>
+                        <Icon icon="prime:twitter" />
+                    </Link>
+                    <Link
+                        v-if="footer.youtube_url"
+                        :href="footer.youtube_url"
+                        target="_blank"
+                        class="transition hover:text-green-400"
+                    >
+                        <Icon icon="hugeicons:youtube" />
+                    </Link>
                 </div>
             </div>
         </div>
@@ -107,15 +140,28 @@
         <div
             class="border-t border-gray-700 py-4 text-center text-xs text-gray-400"
         >
-            <p>© 2020–2025 EcoEats. All rights reserved.</p>
+            <p>© 2020–2025 {{ footer.name }}. All Rights Reserved.</p>
             <p class="mt-1">
-                Fueled by
+                Loved by
                 <a href="#" class="text-green-400 hover:underline"
-                    >CyberSpace Digital</a
+                    >Bikroyon.com</a
                 >
             </p>
         </div>
     </footer>
 </template>
 
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import { Icon } from '@iconify/vue';
+import { Link } from '@inertiajs/vue3';
+
+
+defineProps({
+  footer: {
+    type: Object,
+    required: true,
+  }
+});
+
+
+</script>

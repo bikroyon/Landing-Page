@@ -21,9 +21,9 @@ return new class extends Migration
             $table->string('email')->nullable();
             $table->string('phone')->nullable();
             $table->string('address')->nullable();
-            $table->string('city')->nullable();
-            $table->string('country')->nullable();
-            $table->string('postal_code')->nullable();
+            $table->text('store_description')->nullable();
+            $table->string('messenger')->nullable();
+            $table->string('whatsapp')->nullable();
 
             // Currency
             $table->string('currency')->default('BDT');

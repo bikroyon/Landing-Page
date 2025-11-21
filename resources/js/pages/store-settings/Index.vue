@@ -29,39 +29,83 @@
 
                 <!-- ✅ Basic Info -->
                 <TabsContent value="Basic Info">
-                    <div class="mt-6 grid grid-cols-1 gap-4 md:grid-cols-2">
-                        <label for="store_name">Store Name</label>
-                        <Input id="store_name" v-model="form.store_name" />
+                    <div class="flex flex-row justify-between gap-12">
+                        <div class="w-full">
+                            <div class="">
+                                <h2 class="text-lg font-semibold text-gray-800">
+                                    Brand Info
+                                </h2>
+                                <div class="py-2">
+                                    <label for="store_name">Brand Name</label>
+                                    <Input
+                                        id="store_name"
+                                        v-model="form.store_name"
+                                    />
+                                </div>
 
-                        <label for="store_tagline">Tagline</label>
-                        <Input
-                            id="store_tagline"
-                            v-model="form.store_tagline"
-                        />
+                                <div class="py-2">
+                                    <label for="store_tagline">Tagline</label>
+                                    <Input
+                                        id="store_tagline"
+                                        v-model="form.store_tagline"
+                                    />
+                                </div>
+                                <div class="py-2">
+                                    <label class="block" for="store_tagline"
+                                        >Description</label
+                                    >
+                                    <textarea
+                                        id="store_tagline"
+                                        class="w-full rounded-lg border border-gray-300 p-2"
+                                        v-model="form.store_description"
+                                    />
+                                </div>
+                                <!-- ✅ Meta / SEO -->
+                                <h2 class="text-lg font-semibold text-gray-800">
+                                    Meta & SEO
+                                </h2>
+                                <div class="mt-4">
+                                    <label for="meta_title">Meta Title</label>
+                                    <Input
+                                        id="meta_title"
+                                        v-model="form.meta_title"
+                                    />
 
-                        <label for="store_logo">Logo URL</label>
-                        <ImageUploader v-model="form.store_logo" class="w-60" />
-                        <label for="store_favicon">Favicon URL</label>
-                        <ImageUploader
-                            v-model="form.store_favicon"
-                            class="w-60"
-                        />
-                    </div>
-                    <!-- ✅ Meta / SEO -->
-                    <h2 class="mt-8 text-lg font-semibold text-gray-800">
-                        Meta & SEO
-                    </h2>
-                    <div class="mt-4">
-                        <label for="meta_title">Meta Title</label>
-                        <Input id="meta_title" v-model="form.meta_title" />
-
-                        <label for="meta_description" class="mt-4"
-                            >Meta Description</label
-                        >
-                        <Textarea
-                            id="meta_description"
-                            v-model="form.meta_description"
-                        />
+                                    <label for="meta_description" class="mt-4"
+                                        >Meta Description</label
+                                    >
+                                    <Textarea
+                                        id="meta_description"
+                                        class="w-full rounded-lg border border-gray-300 p-2"
+                                        v-model="form.meta_description"
+                                    />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="flex flex-col gap-4">
+                            <div>
+                                <h2
+                                    class="mb-2 text-lg font-semibold text-gray-800"
+                                >
+                                    Upload Logo
+                                </h2>
+                                <ImageUploader
+                                    v-model="form.store_logo"
+                                    class="w-60"
+                                />
+                            </div>
+                            <div>
+                                  <h2
+                                    class="mb-2 text-lg font-semibold text-gray-800"
+                                >
+                                    Upload FavIcon
+                                </h2>
+                                <ImageUploader
+                                    v-model="form.store_favicon"
+                                    class="w-40"
+                                />
+                            </div>
+                        </div>
                     </div>
                 </TabsContent>
 
@@ -77,14 +121,11 @@
                         <label for="address">Address</label>
                         <Input id="address" v-model="form.address" />
 
-                        <label for="city">City</label>
-                        <Input id="city" v-model="form.city" />
+                        <label for="city">Messenger</label>
+                        <Input id="city" v-model="form.messenger" />
 
-                        <label for="country">Country</label>
-                        <Input id="country" v-model="form.country" />
-
-                        <label for="postal_code">Postal Code</label>
-                        <Input id="postal_code" v-model="form.postal_code" />
+                        <label for="country">WhatsApp</label>
+                        <Input id="country" v-model="form.whatsapp" />
                     </div>
 
                     <!-- ✅ Social Links -->
@@ -151,7 +192,10 @@
                                 <label for="extra_cod"
                                     >Extra Charge For COD <b>(%)</b></label
                                 >
-                                <Input type="text" v-model="form.extra_charge_cod_percentage" />
+                                <Input
+                                    type="text"
+                                    v-model="form.extra_charge_cod_percentage"
+                                />
                             </div>
                         </div>
 
@@ -586,12 +630,12 @@ const form = useForm({
     store_tagline: setting.store_tagline || '',
     store_logo: setting.store_logo || '',
     store_favicon: setting.store_favicon || '',
+    store_description: setting.store_description || '',
     email: setting.email || '',
     phone: setting.phone || '',
     address: setting.address || '',
-    city: setting.city || '',
-    country: setting.country || '',
-    postal_code: setting.postal_code || '',
+    messenger: setting.messenger || '',
+    whatsapp: setting.whatsapp || '',
     currency: setting.currency || 'BDT',
     currency_symbol: setting.currency_symbol || '৳',
     maintenance_mode: setting.maintenance_mode ? 1 : 0,
@@ -603,7 +647,8 @@ const form = useForm({
 
     // ✅ Payments
     enable_cod: setting.cod_method?.status ? 1 : 0,
-    extra_charge_cod_percentage: setting.cod_method?.extra_charge_cod_percentage,
+    extra_charge_cod_percentage:
+        setting.cod_method?.extra_charge_cod_percentage,
 
     enable_bkash: setting.bkash_method?.status ? 1 : 0,
     bkash_account_number: setting.bkash_method?.account_number || '',
@@ -621,9 +666,9 @@ const form = useForm({
     meta_description: setting.meta_description || '',
     products_title: setting.products_title || 'Products',
     customer_info_title: setting.customer_info_title || 'Customer Information',
-    customer_info_label: setting.customer_info_label? 1 : 0,
+    customer_info_label: setting.customer_info_label ? 1 : 0,
     customer_info_name_label: setting.customer_info_name_label || 'Enter Name',
-customer_info_name_status: setting.customer_info_name_status ? 1 : 0,
+    customer_info_name_status: setting.customer_info_name_status ? 1 : 0,
     customer_info_phone_label:
         setting.customer_info_phone_label || 'Enter Phone',
     customer_info_phone_status: setting.customer_info_phone_status ? 1 : 0,
@@ -672,6 +717,6 @@ function submit() {
             );
         },
     });
-    console.log(form)
+    console.log(form);
 }
 </script>

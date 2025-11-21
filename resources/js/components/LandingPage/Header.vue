@@ -6,12 +6,12 @@
             class="mx-auto flex max-w-7xl items-center justify-between px-4 py-3"
         >
             <!-- Logo -->
-            <a
-                href="#"
+            <Link
+                href="/"
                 class="flex items-center text-3xl font-bold text-emerald-500"
             >
                 <p class="text-emerald-600">বিক্র</p>য়ন
-            </a>
+            </Link>
 
             <!-- Desktop Menu -->
             <nav class="hidden items-center space-x-6 md:flex">
